@@ -12,7 +12,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
  * @property array|string name
  * @property array|string email
  * @property array|string password
- * @property string       apikey
+ * @property string apikey
  */
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -43,7 +43,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return static::where('apikey', $key)->first();
     }
+
     public function packages()
     {
         return $this->hasMany('NuGetPackageRevision');
-    }}
+    }
+}
