@@ -1,12 +1,18 @@
 {
-    "name": "melonsmasher/Chocolatier",
+    "name": "MelonSmasher/Chocolatier",
     "description": "Laravel based NuGet/Chocolatey package repository. Forked from LaGet with many enhancements.",
     "keywords": ["Chocolatier", "NuGet", "Chocolatey", "repository", "laravel"],
     "license": "MIT",
-    "homepage": "https://github.com/melonsmasher/Chocolatier",
+    "homepage": "https://github.com/MelonSmasher/Chocolatier",
     "type": "project",
+    "authors": [
+        {
+            "name": "Alex Markessinis",
+            "email": "markea125@gmail.com"
+        }
+    ],
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=7.0.0",
         "laravel/framework": "5.1.*",
         "Chumper/Zipper": "^0.6.1",
         "barryvdh/laravel-ide-helper": "^2.0",
@@ -33,11 +39,14 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "php artisan clear-compiled",
+            "Illuminate\\Foundation\\ComposerScripts::postInstall",
+            "composer dump-autoload -o",
             "php artisan optimize"
         ],
         "pre-update-cmd": [
-            "php artisan clear-compiled"
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "composer dump-autoload -o",
+            "php artisan optimize"
         ],
         "post-update-cmd": [
             "php artisan optimize"
