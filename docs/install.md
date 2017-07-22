@@ -42,20 +42,23 @@ FLUSH PRIVILEGES;
 * Initialize ORM
 
 ```bash
-# Create a package directory
+# Create a package and backup directory
 sudo mkdir -p /home/nginx/packages;
+sudo mkdir -p /home/nginx/chocolatier-backup;
 
 # Set the right permissions
 sudo chown -R nginx:nginx /home/nginx;
+sudo chown -R nginx:nginx /usr/share/nginx/html;
 
 # Go to the web root
 cd /usr/share/nginx/html/;
 
 # Clone Repo with composer
-sudo -u nginx composer create-project melonsmasher/chocolatier Chocolatier; 
+sudo -u nginx composer create-project melonsmasher/chocolatier Chocolatier --keep-vcs;
 
-# Link the packages dir
-sudo -u nginx ln -s /home/nginx/packages/ /usr/share/nginx/html/Chocolatier/storage/app/packages
+# Link package and backup dirs
+sudo -u nginx ln -s /home/nginx/packages/ /usr/share/nginx/html/Chocolatier/storage/app/packages;
+sudo -u nginx ln -s /home/nginx/chocolatier-backup/ /usr/share/nginx/html/Chocolatier/storage/app/chocolatier-backup;
 
 # Get into the project
 cd Chocolatier;
