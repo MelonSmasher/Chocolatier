@@ -48,7 +48,7 @@
         </div>
         <div class="row">
             <div class="col m12">
-                {!! with(new \App\Presenters\Pagination($packages))->render() !!}
+                {{$packages->links()}}
             </div>
         </div>
     </div>

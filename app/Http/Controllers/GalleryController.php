@@ -58,6 +58,12 @@ class GalleryController extends Controller
 
     public function show($package)
     {
+        return $this->showPackage($package);
+    }
+
+    public function showPackage($name)
+    {
+        $package = NugetPackage::where('package_id', $name)->first();
         return view('gallery.show')
             ->with('package', $package)
             ->with('versions', $package->versions());
