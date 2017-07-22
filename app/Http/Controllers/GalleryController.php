@@ -56,11 +56,6 @@ class GalleryController extends Controller
         return view('gallery.index', $data);
     }
 
-    public function browse()
-    {
-        return redirect(route('gallery.index'));
-    }
-
     public function showPackage($name)
     {
         $package = NugetPackage::where('package_id', $name)->first();
