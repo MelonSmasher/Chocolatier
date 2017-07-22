@@ -12,7 +12,7 @@ LaradirectoryNuGet/Chocolatey package repository. Forked from [LaGet](https://gi
 
 Chocolatier allows you to host your own NuGet repository on any platform that can run PHP and MySQL. 
 
-A live example of Chocolatier can be found here: [choco.sage.edu](https://choco.sage.edu), which is also utilizing my [NuGetReflector](https://github.com/MelonSmasher/NuGetReflector).
+A live example of Chocolatier can be found at [choco.sage.edu](https://choco.sage.edu). The example site is also utilizing my [NuGetReflector](https://github.com/MelonSmasher/NuGetReflector).
 
 The current release of Chocolatier is based on Laravel 5.4.
 
