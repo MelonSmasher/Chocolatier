@@ -48,7 +48,7 @@
         </div>
         <div class="row">
             <div class="col m12">
-                {{$packages->links()}}
+                {{$packages->appends(Input::except('page'))->links()}}
             </div>
         </div>
     </div>
