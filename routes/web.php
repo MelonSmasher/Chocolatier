@@ -12,4 +12,4 @@ Auth::routes();
 Route::get('/', 'GalleryController@home')->name('home');
 Route::get('/browse', 'GalleryController@browse')->name('packages.index');
 Route::get('/packages', 'GalleryController@index')->name('gallery.index');
-Route::get('/packages/{name}', 'GalleryController@showPackage')->name('gallery.show.package');
+Route::get('/packages/{name}', 'GalleryController@showPackage')->name('packages.show');
