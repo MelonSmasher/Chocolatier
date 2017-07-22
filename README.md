@@ -10,6 +10,8 @@ Laravel based NuGet/Chocolatey package repository. Forked from [LaGet](https://g
 
 ---
 
+## About
+
 Chocolatier allows you to host your own NuGet repository on any platform that can run PHP and MySQL. 
 
 A live example of Chocolatier can be found at [choco.sage.edu](https://choco.sage.edu). The example site is also utilizing my [NuGetReflector](https://github.com/MelonSmasher/NuGetReflector).
