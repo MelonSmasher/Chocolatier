@@ -1,5 +1,5 @@
 {
-    "name": "MelonSmasher/Chocolatier",
+    "name": "melonsmasher/chocolatier",
     "description": "Laravel based NuGet/Chocolatey package repository. Forked from LaGet with many enhancements.",
     "keywords": ["Chocolatier", "NuGet", "Chocolatey", "repository", "laravel"],
     "license": "MIT",
