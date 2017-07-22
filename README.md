@@ -3,7 +3,7 @@
 Laravel based NuGet/Chocolatey package repository. Forked from [LaGet](https://github.com/ikkentim/LaGet) with many enhancements.
 
 
-<img src="https://raw.githubusercontent.com/MelonSmasher/Chocolatier/master/public/mstile-310x310.png" alt="logo" style="width: 200px;"/>
+<img src="https://raw.githubusercontent.com/MelonSmasher/Chocolatier/master/public/logo/logo_md.png" alt="logo" style="width: 200px;"/>
 
 ---
 

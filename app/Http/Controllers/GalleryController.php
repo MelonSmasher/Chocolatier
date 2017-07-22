@@ -56,9 +56,9 @@ class GalleryController extends Controller
         return view('gallery.index', $data);
     }
 
-    public function show($package)
+    public function browse()
     {
-        return $this->showPackage($package);
+        return redirect(route('gallery.index'));
     }
 
     public function showPackage($name)
