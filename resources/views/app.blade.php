@@ -27,20 +27,27 @@
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
-<body>
+<body class="blue lighten-5">
 <header>
-    <nav class="top-nav">
+    <nav class="top-nav blue lighten-1">
         <div class="container">
             <div class="nav-wrapper">
                 <a href="#" data-activates="slide-out" class="button-collapse top-nav full hide-on-large-only">
                     <i class="mdi-navigation-menu"></i>
                 </a>
 
-                <a href="{{ route('home') }}" class="brand-logo">{{ config('choco.shortname') }}</a>
+                <div>
+                    <img style="vertical-align: middle; margin-left: 10pt;" class="img-responsive" height="48"
+                         src="/images/logo/logo_lg.png">
+                    <a href="{{ route('home') }}" class="brand-logo"
+                       style="margin-left: 10pt;">{{config('choco.shortname') }}</a>
+                </div>
 
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li><a href="{{ route('packages.index', ['by' => 'most', 'count' => 30]) }}">Browse</a></li>
+                    <li><a class="waves-effect waves-light btn orange lighten-1" style="margin: 5pt;"
+                           href="{{ route('home') }}">Home</a></li>
+                    <li><a class="waves-effect waves-light btn orange lighten-1" style="margin: 5pt;"
+                           href="{{ route('packages.index', ['by' => 'most', 'count' => 30]) }}">Browse</a></li>
                 </ul>
             </div>
         </div>
@@ -62,7 +69,7 @@
 <main>
     @yield('content')
 </main>
-<footer class="page-footer">
+<footer class="page-footer blue lighten-1">
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
@@ -79,7 +86,7 @@
                         @foreach(config('choco.links') as $link)
                             <li>
                                 <a class="grey-text text-lighten-3"
-                                   href="{{ $link['href'] }}">{!! $link['title'] !!}</a>
+                                   target="_blank" href="{{ $link['href'] }}">{!! $link['title'] !!}</a>
                             </li>
                         @endforeach
                     </ul>
@@ -89,7 +96,8 @@
     </div>
     <div class="footer-copyright">
         <div class="container">
-            Powered by <a class="grey-text text-lighten-3" href="https://github.com/MelonSmasher/Chocolatier">Chocolatier</a>.
+            Powered by <a class="grey-text text-lighten-3" target="_blank"
+                          href="https://github.com/MelonSmasher/Chocolatier">Chocolatier</a>.
         </div>
     </div>
 </footer>
