@@ -2,6 +2,9 @@
 
 return [
 
+
+    'name' => env('APP_SHORT_NAME', 'production'),
+
     'env' => env('APP_ENV', 'production'),
 
 
@@ -148,6 +151,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ResponseMacroServiceProvider::class,
