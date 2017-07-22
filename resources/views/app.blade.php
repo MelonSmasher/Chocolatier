@@ -36,18 +36,17 @@
                     <i class="mdi-navigation-menu"></i>
                 </a>
 
-                <div>
-                    <img style="vertical-align: middle; margin-left: 10pt;" class="img-responsive" height="48"
-                         src="/images/logo/logo_lg.png">
-                    <a href="{{ route('home') }}" class="brand-logo"
-                       style="margin-left: 10pt;">{{config('choco.shortname') }}</a>
-                </div>
+                <img style="vertical-align: middle;" class="img-responsive" height="48"
+                     src="/images/logo/logo_lg.png">
+                <a href="{{ route('home') }}" class="brand-logo"
+                   style="margin-left: 15pt;">{{config('choco.shortname') }}</a>
 
                 <ul class="right hide-on-med-and-down">
                     <li><a class="waves-effect waves-light btn orange lighten-1" style="margin: 5pt;"
                            href="{{ route('home') }}">Home</a></li>
                     <li><a class="waves-effect waves-light btn orange lighten-1" style="margin: 5pt;"
-                           href="{{ route('packages.index', ['by' => 'most', 'count' => 30, 'page' => 1]) }}">Browse</a></li>
+                           href="{{ route('packages.index', ['by' => 'most', 'count' => 30, 'page' => 1]) }}">Browse</a>
+                    </li>
                 </ul>
             </div>
         </div>
