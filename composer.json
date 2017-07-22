@@ -17,7 +17,9 @@
         "Chumper/Zipper": "^0.6.1",
         "barryvdh/laravel-ide-helper": "^2.0",
         "predis/predis": "^1.1",
-        "pusher/pusher-php-server": "^3.0"
+        "pusher/pusher-php-server": "^3.0",
+        "spatie/laravel-backup": "^4.18",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -62,6 +64,8 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }
