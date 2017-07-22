@@ -4,6 +4,7 @@ namespace App\Choco\NuGet;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Choco\Atom\AtomElement;
+use App\Model\User;
 
 /**
  * @property string hash
@@ -61,11 +62,11 @@ class NugetPackage extends Model {
     /**
      * Gets the user that uploaded this package.
      *
-     * @return User
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->belongsTo('User');
+        return $this->belongsTo(User::class);
     }
 
     public function versions()
