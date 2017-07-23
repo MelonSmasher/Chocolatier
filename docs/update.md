@@ -3,7 +3,7 @@
 ### update
 
 ```bash
-# Stop nginx
+# Stop NGINX
 service nginx stop;
 
 # Go to the web root
@@ -27,4 +27,7 @@ sudo -u nginx vi .env;
 
 # Run DB Migrations
 sudo -u nginx php artisan migrate --force;
+
+# Start NGINX
+service nginx start;
 ```
