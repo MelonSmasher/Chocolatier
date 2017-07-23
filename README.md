@@ -22,3 +22,6 @@ The current release of Chocolatier is based on Laravel 5.4.
 
 See: [install.md](docs/install.md)
 
+## Updating:
+
+See: [update.md](docs/update.md)
