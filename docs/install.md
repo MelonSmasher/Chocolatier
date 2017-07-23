@@ -62,17 +62,17 @@ sudo -u nginx ln -s /home/nginx/chocolatier-backup/ /usr/share/nginx/html/Chocol
 
 # Get into the project
 cd Chocolatier;
-```
 
-* Configure environment settings
-
-```bash
+# Configure environment settings
 sudo -u nginx vi .env;
-```
 
-* DB Migrations
-
-```bash
 # Run DB Migrations
 sudo -u nginx php artisan migrate --force;
+
+# Optimize
+sudo -u nginx php artisan optimize
+sudo -u nginx php artisan route:cache
+
+# Start NGINX
+service nginx restart;
 ```

@@ -28,6 +28,10 @@ sudo -u nginx vi .env;
 # Run DB Migrations
 sudo -u nginx php artisan migrate --force;
 
+# Optimize
+sudo -u nginx php artisan optimize
+sudo -u nginx php artisan route:cache
+
 # Start NGINX
 service nginx start;
 ```
