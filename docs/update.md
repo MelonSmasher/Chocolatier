@@ -14,7 +14,7 @@ sudo -u nginx php artisan backup:run;
 
 # Pull the latest code
 sudo -u nginx git checkout master;
-sudo -u nginx git pull origin master;
+sudo -u nginx git pull;
 
 # Check out to the latest tag
 sudo -u nginx git checkout $(git describe --tags $(git rev-list --tags --max-count=1));
