@@ -13,6 +13,7 @@ cd /usr/share/nginx/html/Chocolatier;
 sudo -u nginx php artisan backup:run;
 
 # Pull the latest code
+sudo -u nginx git checkout master;
 sudo -u nginx git pull origin master;
 
 # Check out to the latest tag
