@@ -3,7 +3,7 @@
 return [
 
 
-    'name' => env('APP_SHORT_NAME', 'production'),
+    'name' => env('APP_SHORT_NAME', 'Chocolatier'),
 
     'env' => env('APP_ENV', 'production'),
 

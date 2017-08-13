@@ -1,3 +1,4 @@
 * text=auto
 *.css linguist-vendored
 *.less linguist-vendored
+*.psd filter=lfs diff=lfs merge=lfs -text
