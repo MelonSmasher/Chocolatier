@@ -8,7 +8,8 @@ use \DOMElement;
  *
  * @package App\Choco\Atom
  */
-class AtomElement {
+class AtomElement
+{
     const XMLNS_NS = 'http://www.w3.org/2000/xmlns/';
 
     /**
@@ -69,11 +70,11 @@ class AtomElement {
     private $properties = [];
 
     /**
-     * @param string    $type
-     * @param string    $id
-     * @param string    $title
+     * @param string $type
+     * @param string $id
+     * @param string $title
      * @param int|mixed $updated
-     * @param string    $summary
+     * @param string $summary
      */
     function __construct($type, $id, $title, $updated, $summary = null)
     {
@@ -125,15 +126,15 @@ class AtomElement {
      */
     function addAuthors($authors)
     {
-        foreach(explode(',', $authors) as $author)
+        foreach (explode(',', $authors) as $author)
             $this->addAuthor(trim($author));
 
         return $this;
     }
 
     /**
-     * @param string      $name
-     * @param string      $value
+     * @param string $name
+     * @param string $value
      * @param string|null $type
      * @return AtomElement
      */
@@ -150,7 +151,7 @@ class AtomElement {
      */
     function setCount($count)
     {
-        if(is_int($count))
+        if (is_int($count))
             $this->count = $count;
 
         return $this;
@@ -200,24 +201,20 @@ class AtomElement {
         $self->appendChild($document->createElement('updated', is_numeric($this->updated)
             ? date('Y-m-d\TH:i:s\Z', $this->updated) : $this->updated->format('Y-m-d\TH:i:s\Z')));
 
-        if ($this->count !== null)
-        {
+        if ($this->count !== null) {
             $self->appendChild($document->createElement('m:count', $this->count));
         }
 
         // Authors
-        if (!empty($this->authors))
-        {
+        if (!empty($this->authors)) {
             $authorElement = $self->appendChild($document->createElement('author'));
-            foreach ($this->authors as $author)
-            {
+            foreach ($this->authors as $author) {
                 $authorElement->appendChild($document->createElement('name', $author));
             }
         }
 
         // Category
-        if ($this->category !== null && $this->categoryScheme !== null)
-        {
+        if ($this->category !== null && $this->categoryScheme !== null) {
             $categoryElement = $document->createElement('category');
             $self->appendChild($categoryElement);
 
@@ -226,20 +223,17 @@ class AtomElement {
         }
 
         // Links
-        foreach ($this->links as $link)
-        {
+        foreach ($this->links as $link) {
             $linkElement = $document->createElement('link');
             $self->appendChild($linkElement);
 
-            foreach ($link as $key => $value)
-            {
+            foreach ($link as $key => $value) {
                 $linkElement->setAttribute($key, $value);
             }
         }
 
         // Content
-        if ($this->contentType !== null && $this->contentSrc !== null)
-        {
+        if ($this->contentType !== null && $this->contentSrc !== null) {
             $contentElement = $document->createElement('content');
             $contentElement->setAttribute('type', $this->contentType);
             $contentElement->setAttribute('src', $this->contentSrc);
@@ -248,28 +242,28 @@ class AtomElement {
         }
 
         // Child elements
-        foreach ($this->childElements as $childElement)
-        {
+        foreach ($this->childElements as $childElement) {
             $self->appendChild($childElement->createElementTree($document));
         }
 
         // Properties
-        if (!empty($this->properties))
-        {
+        if (!empty($this->properties)) {
             $propertiesElement = $self->appendChild($document->createElement('m:properties'));
 
-            foreach ($this->properties as $property)
-            {
+            foreach ($this->properties as $property) {
+
+                if (filter_var($property['value'], FILTER_VALIDATE_URL) === TRUE) {
+                    $property['value'] = urldecode($property['value']);
+                }
+
                 $propertyElement = $document->createElement('d:' . $property['name'], $property['value']);
                 $propertiesElement->appendChild($propertyElement);
 
-                if ($property['type'] !== null)
-                {
+                if ($property['type'] !== null) {
                     $propertyElement->setAttribute('m:type', $property['type']);
                 }
 
-                if (!is_numeric($property['value']) && empty($property['value']))
-                {
+                if (!is_numeric($property['value']) && empty($property['value'])) {
                     $propertyElement->setAttribute('m:null', 'true');
                 }
             }
