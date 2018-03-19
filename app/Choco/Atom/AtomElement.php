@@ -209,7 +209,7 @@ class AtomElement
         if (!empty($this->authors)) {
             $authorElement = $self->appendChild($document->createElement('author'));
             foreach ($this->authors as $author) {
-                $authorElement->appendChild($document->createElement('name', $author));
+                $authorElement->appendChild($document->createElement('name', htmlspecialchars($author)));
             }
         }
 
@@ -256,7 +256,7 @@ class AtomElement
                     $property['value'] = urldecode($property['value']);
                 }
 
-                $propertyElement = $document->createElement('d:' . $property['name'], $property['value']);
+                $propertyElement = $document->createElement('d:' . $property['name'], htmlspecialchars($property['value']));
                 $propertiesElement->appendChild($propertyElement);
 
                 if ($property['type'] !== null) {
