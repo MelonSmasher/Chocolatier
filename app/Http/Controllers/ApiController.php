@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DOMDocument;
 
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -80,9 +81,9 @@ class ApiController extends Controller {
      * @param $version
      * @return mixed
      */
-    public function download($id, $version)
+    public function download($id, $version = null)
     {
-        if (strtolower($version) === 'latest') {
+        if (strtolower($version) === 'latest' || empty($version)) {
             $package = NugetPackage::where('package_id', $id)
                 ->where('is_absolute_latest_version', true)
                 ->orderBy('updated_at', 'desc')
