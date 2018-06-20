@@ -82,9 +82,15 @@ class ApiController extends Controller {
      */
     public function download($id, $version)
     {
-        $package = NugetPackage::where('package_id', $id)
-            ->where('version', $version)
-            ->first();
+        if (strtolower($version) === 'latest') {
+            $package = NugetPackage::where('package_id', $id)
+                ->where('is_absolute_latest_version', true)
+                ->first();
+        } else {
+            $package = NugetPackage::where('package_id', $id)
+                ->where('version', $version)
+                ->first();
+        }
         if ($package === null)
         {
             return Response::make('not found', 404);
