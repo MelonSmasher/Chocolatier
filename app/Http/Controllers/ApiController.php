@@ -85,6 +85,7 @@ class ApiController extends Controller {
         if (strtolower($version) === 'latest') {
             $package = NugetPackage::where('package_id', $id)
                 ->where('is_absolute_latest_version', true)
+                ->orderBy('updated_at', 'desc')
                 ->first();
         } else {
             $package = NugetPackage::where('package_id', $id)
