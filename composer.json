@@ -13,13 +13,14 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "laravel/framework": "5.4.*",
         "Chumper/Zipper": "^0.6.1",
         "barryvdh/laravel-ide-helper": "^2.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "laravel/framework": "5.4.*",
+        "laravel/tinker": "^1.0",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^3.0",
-        "spatie/laravel-backup": "^4.18",
-        "guzzlehttp/guzzle": "^6.3"
+        "spatie/laravel-backup": "^4.18"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

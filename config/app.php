@@ -145,6 +145,7 @@ return [
         /**
          * 3rd party
          */
+        Laravel\Tinker\TinkerServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Spatie\Backup\BackupServiceProvider::class,
 
