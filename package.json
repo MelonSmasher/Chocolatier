@@ -23,6 +23,6 @@
     "vue": "^2.5.17"
   },
   "dependencies": {
-    "bootstrap-sass": "^3.0.0"
+    "bootstrap-sass": "^3.4.1"
   }
 }
