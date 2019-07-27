@@ -1,7 +1,9 @@
 <?php namespace App\Nuget;
+
 use \SimpleXMLElement;
 
-class NuspecFile {
+class NuspecFile
+{
     public $id;
     public $version;
     public $title;
@@ -62,8 +64,7 @@ class NuspecFile {
     {
         $nuspec = new SimpleXMLElement($xml);
 
-        if ($nuspec === null || empty($nuspec->metadata))
-        {
+        if ($nuspec === null || empty($nuspec->metadata)) {
             return null;
         }
 
@@ -90,8 +91,7 @@ class NuspecFile {
         // dependencies processor
         $dependenciesElement = $nuspec->metadata->dependencies;
 
-        if ($dependenciesElement)
-        {
+        if ($dependenciesElement) {
             $dependencies = [];
 
             // process v1 types
@@ -99,13 +99,12 @@ class NuspecFile {
                 ? $dependenciesElement->dependency
                 : [$dependenciesElement->dependency];
 
-            foreach ($v1Dependencies as $dep)
-            {
+            foreach ($v1Dependencies as $dep) {
                 if (!isset($dep['id'])) continue;
                 array_push($dependencies, [
-                    'id'              => (string)$dep['id'],
+                    'id' => (string)$dep['id'],
                     'targetFramework' => null,
-                    'version'         => isset($dep['version'])
+                    'version' => isset($dep['version'])
                         ? (string)$dep['version']
                         : null
                 ]);
@@ -115,8 +114,7 @@ class NuspecFile {
                 ? $dependenciesElement->group
                 : [$dependenciesElement->group];
 
-            foreach ($v2DepGroups as $depGroup)
-            {
+            foreach ($v2DepGroups as $depGroup) {
                 $targetFramework = isset($dep['targetFramework'])
                     ? (string)$dep['targetFramework']
                     : null;
@@ -125,21 +123,19 @@ class NuspecFile {
                     ? $depGroup->dependency
                     : [$depGroup->dependency];
 
-                foreach ($v2Dependencies as $dep)
-                {
+                foreach ($v2Dependencies as $dep) {
                     if (!isset($dep['id'])) continue;
                     array_push($dependencies, [
-                        'id'              => (string)$dep['id'],
+                        'id' => (string)$dep['id'],
                         'targetFramework' => $targetFramework,
-                        'version'         => isset($dep['version'])
+                        'version' => isset($dep['version'])
                             ? (string)$dep['version']
                             : null
                     ]);
                 }
             }
 
-            $dependenciesString = implode('|', array_map(function ($dependency)
-            {
+            $dependenciesString = implode('|', array_map(function ($dependency) {
                 return "{$dependency['id']}:{$dependency['version']}:{$dependency['targetFramework']}";
             }, $dependencies));
 

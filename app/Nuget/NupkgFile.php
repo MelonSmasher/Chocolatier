@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use App\Choco\NuGet\NugetPackage;
 
-class NupkgFile {
+class NupkgFile
+{
     private $filename;
     private $isFileInStorage;
 
@@ -59,14 +60,12 @@ class NupkgFile {
             ->listFiles();
 
         // List files in .nupkg with .nuspec extension
-        $nuspecFiles = array_filter($fileList, function ($item)
-        {
+        $nuspecFiles = array_filter($fileList, function ($item) {
             return substr($item, -7) === '.nuspec';
         });
 
         // If no .nuspec files exist, return false
-        if (count($nuspecFiles) == 0)
-        {
+        if (count($nuspecFiles) == 0) {
             $zipper->close();
 
             return false;
@@ -81,16 +80,14 @@ class NupkgFile {
 
     public function savePackage($uploader)
     {
-        if ($uploader === null)
-        {
+        if ($uploader === null) {
             return false;
         }
 
         // read specs
         $nuspec = $this->getNuspec();
 
-        if ($nuspec === null)
-        {
+        if ($nuspec === null) {
             return false;
         }
 
@@ -102,8 +99,7 @@ class NupkgFile {
             ->where('version', $nuspec->version)
             ->first();
 
-        if ($package === null)
-        {
+        if ($package === null) {
             $package = new NugetPackage();
         }
 
@@ -136,27 +132,22 @@ class NupkgFile {
             ->where('version', '!=', $package->version)
             ->first();
 
-        if ($absolute_latest_package != null)
-        {
+        if ($absolute_latest_package != null) {
             $absolute_latest_package->is_absolute_latest_version = false;
             $absolute_latest_package->save();
 
             $package->download_count = $absolute_latest_package->download_count;
-        }
-        else
-        {
+        } else {
             $package->is_latest_version = true;
         }
 
-        if (!$package->is_prerelease)
-        {
+        if (!$package->is_prerelease) {
             $latest_package = NugetPackage::where('package_id', $nuspec->id)
                 ->where('is_latest_version', true)
                 ->where('version', '!=', $package->version)
                 ->first();
 
-            if ($latest_package != null)
-            {
+            if ($latest_package != null) {
                 $latest_package->is_latest_version = false;
                 $latest_package->save();
             }

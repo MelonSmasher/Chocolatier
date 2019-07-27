@@ -2,7 +2,7 @@
 
 ### Requirements:
 
-- php >= 7.0.0
+- php >= 7.1.3
 - Redis
 - MariaDB/MySQL (tested on MariaDB 10.1)
 - [Yarn](https://yarnpkg.com/) -- For development*

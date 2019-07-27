@@ -6,27 +6,31 @@
  * Time: 7:17 PM
  */
 
-Route::group(['as' => 'api.'], function ()
-{
-    Route::group(['middleware' => ['auth.nuget', 'file.nuget:package']], function ()
-    {
+Route::group(['as' => 'api.'], function () {
+    Route::group(['middleware' => ['auth.nuget', 'file.nuget:package']], function () {
         Route::put('/upload', ['as' => 'upload', 'uses' => 'ApiController@upload']);
         Route::put('/', ['as' => 'upload', 'uses' => 'ApiController@upload']);
+    });
+
+    Route::group(['middleware' => ['auth.nuget']], function () {
+        Route::delete('/{id}/{version}', ['as' => 'delete', 'uses' => 'ApiController@delete']);
     });
 
     Route::get('/download/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
     Route::get('/download/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
 
-    Route::group(['prefix' => '/v2'], function ()
-    {
+    Route::group(['prefix' => '/v2'], function () {
         Route::get('/download/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
         Route::get('/download/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
 
-        Route::group(['middleware' => ['auth.nuget', 'file.nuget:package']], function ()
-        {
+        Route::group(['middleware' => ['auth.nuget', 'file.nuget:package']], function () {
             Route::put('/upload', ['as' => 'upload', 'uses' => 'ApiController@upload']);
             Route::put('/', ['as' => 'upload', 'uses' => 'ApiController@upload']);
             Route::put('/package', ['as' => 'upload', 'uses' => 'ApiController@upload']);
+        });
+
+        Route::group(['middleware' => ['auth.nuget']], function () {
+            Route::delete('/{id}/{version}', ['as' => 'delete', 'uses' => 'ApiController@delete']);
         });
 
         Route::get('/', ['as' => 'index', 'uses' => 'ApiController@index']);

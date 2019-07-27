@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use DOMDocument;
 
-use function GuzzleHttp\Psr7\str;
+
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use App\Choco\Atom\AtomElement;
-use App\Http\Requests;
 use App\Http\Requests\NugetRequest;
 use App\Nuget\NupkgFile;
 use App\Repositories\NugetQueryBuilder;
 use App\Choco\NuGet\NugetPackage;
 
-class ApiController extends Controller {
+class ApiController extends Controller
+{
     private $queryBuilder;
 
     /**
@@ -61,8 +60,7 @@ class ApiController extends Controller {
         $user = $request->getUser();
         $file = $request->getUploadedFile('package');
 
-        if($file === false)
-        {
+        if ($file === false) {
             \Log::error('package not uploaded on second check');
             return Response('package not uploaded on second check', 500);
         }
@@ -72,6 +70,35 @@ class ApiController extends Controller {
         $nupkg->savePackage($user);
 
         return Response::make('OK');
+    }
+
+    /**
+     * @param NugetRequest $request
+     * @param $id
+     * @param $version
+     * @return mixed
+     */
+    public function delete(NugetRequest $request, $id, $version)
+    {
+        $user = $request->getUser();
+        if ($user) {
+
+            $package = NugetPackage::where('package_id', $id)->where('version', $version)->firstOrFail();
+
+            $is_latest_version = $package->is_latest_version;
+            $is_absolute_latest_version = $package->is_absolute_latest_version;
+
+            $package->delete();
+            $nextVersion = NugetPackage::orderby('created_at', 'desc')->first();
+
+            if ($nextVersion) {
+                if (!$nextVersion->is_latest_version) $nextVersion->is_latest_version = $is_latest_version;
+                if (!$nextVersion->is_absolute_latest_version) $nextVersion->is_absolute_latest_version = $is_absolute_latest_version;
+                if($nextVersion->isDirty()) $nextVersion->save();
+            }
+            return Response::make('No Content', 204);
+        }
+        return Response::make('Unauthorized', 403);
     }
 
     /**
@@ -93,16 +120,14 @@ class ApiController extends Controller {
                 ->where('version', $version)
                 ->first();
         }
-        if ($package === null)
-        {
+        if ($package === null) {
             return Response::make('not found', 404);
         }
         $package->version_download_count++;
         $package->save();
 
         foreach (NugetPackage::where('package_id', $id)
-                     ->get() as $vPackage)
-        {
+                     ->get() as $vPackage) {
             $vPackage->download_count++;
             $vPackage->save();
         }
@@ -118,8 +143,7 @@ class ApiController extends Controller {
      */
     public function search($action)
     {
-        if ($action == 'count' || $action == '$count')
-        {
+        if ($action == 'count' || $action == '$count') {
             $count = $this->processSearchQuery()
                 ->count();
 
@@ -168,8 +192,7 @@ class ApiController extends Controller {
             ->where('version', $version)
             ->first();
 
-        if ($package == null)
-        {
+        if ($package == null) {
             return $this->generateResourceNotFoundError('Packages');
         }
 
@@ -211,25 +234,21 @@ class ApiController extends Controller {
         //$version_constraints= explode('|', Input::get('versionConstraints'));//@todo ??
         //$target_frameworks= explode('|', Input::get('targetFrameworks'));//@todo ??
 
-        if (count($package_ids) != count($package_versions))
-        {
+        if (count($package_ids) != count($package_versions)) {
             return $this->generateError('Invalid version count', 'eu-US', 301);
         }
 
         // Query database.
         $packages = [];
-        foreach ($package_ids as $index => $id)
-        {
+        foreach ($package_ids as $index => $id) {
             $version = $package_versions[$index];
             $builder = NugetPackage::where('package_id', $id);
-            if (!$include_prerelease)
-            {
+            if (!$include_prerelease) {
                 $builder = $builder->where('is_prerelease', false);
             }
             $latest = $builder->orderBy('created_at', 'desc')
                 ->first();
-            if ($latest != null && $latest->version != $version)
-            {
+            if ($latest != null && $latest->version != $version) {
                 array_push($packages, $latest);
             }
         }
@@ -257,29 +276,23 @@ class ApiController extends Controller {
 
     /**
      * @param NugetPackage $package
-     * @param array        $properties
-     * @param AtomElement  $atomElement
+     * @param array $properties
+     * @param AtomElement $atomElement
      */
     private function addPackagePropertiesToAtomElement($package, $properties, $atomElement)
     {
-        foreach ($properties as $property)
-        {
-            if (!$this->queryBuilder->isProperty($property))
-            {
+        foreach ($properties as $property) {
+            if (!$this->queryBuilder->isProperty($property)) {
                 continue;
             }
 
             $mapping = $this->queryBuilder->getMapping($property);
 
-            if (array_has($mapping, 'function'))
-            {
+            if (array_has($mapping, 'function')) {
                 $func = $mapping['function'];
                 $value = $package->$func();
-            }
-            else
-            {
-                if (array_has($mapping, 'field'))
-                {
+            } else {
+                if (array_has($mapping, 'field')) {
                     $field = $mapping['field'];
                     $value = $package->$field;
                 }
@@ -297,14 +310,13 @@ class ApiController extends Controller {
      * @param        $id
      * @param        $title
      * @param        $updated
-     * @param  mixed $count
+     * @param mixed $count
      * @return mixed
      */
     private function displayPackages($packages, $id, $title, $updated, $count = false)
     {
         $properties = Input::has('$select')
-            ? array_filter(explode(',', Input::get('$select')), function ($name)
-            {
+            ? array_filter(explode(',', Input::get('$select')), function ($name) {
                 return $this->queryBuilder->isProperty($name);
             })
             : $this->queryBuilder->getAllProperties();
@@ -314,8 +326,7 @@ class ApiController extends Controller {
             ->setCount($count);
 
         /** @var NugetPackage $package */
-        foreach ($packages as $package)
-        {
+        foreach ($packages as $package) {
             $atomElement = $package->getAtomElement();
             $this->addPackagePropertiesToAtomElement($package, $properties, $atomElement);
             $atom->appendChild($atomElement);
@@ -340,10 +351,8 @@ class ApiController extends Controller {
         // Query database.
         $eloquent = $this->queryBuilder->query(Input::get('$filter'), Input::get('$orderby'));
 
-        if (!empty($search_term))
-        {
-            $eloquent = $eloquent->where(function ($query) use ($search_term)
-            {
+        if (!empty($search_term)) {
+            $eloquent = $eloquent->where(function ($query) use ($search_term) {
                 $query->where('package_id', 'LIKE', "%$search_term%");
                 $query->orWhere('title', 'LIKE', "%$search_term%");
                 $query->orWhere('description', 'LIKE', "%$search_term%");
@@ -352,8 +361,7 @@ class ApiController extends Controller {
                 $query->orWhere('authors', 'LIKE', "%$search_term%");
             });
         }
-        if (!$include_prerelease)
-        {
+        if (!$include_prerelease) {
             $eloquent->where('is_prerelease', false);
         }
 
