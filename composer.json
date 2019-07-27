@@ -1,72 +1,76 @@
 {
-    "name": "melonsmasher/chocolatier",
-    "description": "Laravel based NuGet/Chocolatey package repository. Forked from LaGet with many enhancements.",
-    "keywords": ["Chocolatier", "NuGet", "Chocolatey", "repository", "laravel"],
-    "license": "MIT",
-    "homepage": "https://github.com/MelonSmasher/Chocolatier",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Alex Markessinis",
-            "email": "markea125@gmail.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.0.0",
-        "Chumper/Zipper": "^0.6.1",
-        "barryvdh/laravel-ide-helper": "^2.0",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "5.4.*",
-        "laravel/tinker": "^1.0",
-        "predis/predis": "^1.1",
-        "pusher/pusher-php-server": "^3.0",
-        "spatie/laravel-backup": "^4.18"
-    },
-    "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7",
-        "phpspec/phpspec": "~2.1",
-        "symfony/dom-crawler": "3.1.*",
-        "symfony/css-selector": "3.1.*"
-    },
-    "autoload": {
-        "classmap": [
-            "database"
-        ],
-        "psr-4": {
-            "App\\": "app/"
-        }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "composer dump-autoload -o",
-            "php artisan optimize"
-        ],
-        "pre-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "composer dump-autoload -o",
-            "php artisan optimize"
-        ],
-        "post-update-cmd": [
-            "php artisan optimize"
-        ],
-        "post-root-package-install": [
-            "php -r \"copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "php artisan key:generate"
-        ]
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true
+  "name": "melonsmasher/chocolatier",
+  "description": "Laravel based NuGet/Chocolatey package repository. Forked from LaGet with many enhancements.",
+  "keywords": [
+    "Chocolatier",
+    "NuGet",
+    "Chocolatey",
+    "repository",
+    "laravel"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/MelonSmasher/Chocolatier",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Alex Markessinis",
+      "email": "markea125@gmail.com"
     }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "fideloper/proxy": "~3.3",
+    "laravel/framework": "5.5.*",
+    "laravel/tinker": "^1.0",
+    "Chumper/Zipper": "^0.6.1",
+    "barryvdh/laravel-ide-helper": "^2.0",
+    "guzzlehttp/guzzle": "^6.3",
+    "predis/predis": "^1.1",
+    "pusher/pusher-php-server": "~3.0",
+    "spatie/laravel-backup": "^5.6"
+  },
+  "require-dev": {
+    "filp/whoops": "~2.0",
+    "fzaninotto/faker": "~1.4",
+    "mockery/mockery": "~1.0",
+    "phpunit/phpunit": "~6.0",
+    "symfony/thanks": "^1.0"
+  },
+  "autoload": {
+    "classmap": [
+      "database",
+      "database/factories"
+    ],
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": [
+      ]
+    }
+  },
+  "scripts": {
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate"
+    ],
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover"
+    ]
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  }
 }
