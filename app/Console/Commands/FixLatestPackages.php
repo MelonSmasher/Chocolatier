@@ -57,10 +57,11 @@ class FixLatestPackages extends Command
                 foreach ($packages as $package) {
                     if ($package->id !== $highest->id) {
                         $cVer = new SemVer\Version($package->version);
-                        if($highestVer->lt($cVer)) {
+                        if ($highestVer->lt($cVer)) {
                             $highest->is_absolute_latest_version = false;
                             $highest->save();
                             $highest = $package;
+                            $this->info($id->package_id . ': found new highest version: ' . $highestVer . ' < ' . $cVer);
                         } else {
                             $package->is_absolute_latest_version = false;
                             $package->save();
