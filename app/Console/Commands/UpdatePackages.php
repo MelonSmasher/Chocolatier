@@ -64,6 +64,7 @@ class UpdatePackages extends Command
                 if($tmpNupkg->getNuspec()->version != $pkg->version) {
                     $tmpNupkg->savePackage($user);
                     unlink($tmpFilePath);
+                    $this->info($pkg->package_id . ': updated: ' . $tmpNupkg->getNuspec()->version);
                 }
                 $processed[] = $pkg->package_id;
             }
