@@ -14,6 +14,8 @@ use App\Http\Requests\NugetRequest;
 use App\Nuget\NupkgFile;
 use App\Repositories\NugetQueryBuilder;
 use App\Choco\NuGet\NugetPackage;
+Use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 class ApiController extends Controller
 {
@@ -201,6 +203,14 @@ class ApiController extends Controller
             ->first();
 
         if ($package == null) {
+            $packageUrl = 'https://chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
+            $client = new Client([]);
+            $dlRequest = new Request('GET', $packageUrl);
+            $res = $client->send($dlRequest, ['allow_redirects' => true, 'http_errors' => false]);
+            if ($res->getStatusCode() === 200) {
+                CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version);
+                return Response::make($res->getBody(), 200, ['Content-Type' => 'application/atom+xml;type=feed;charset=utf-8']);
+            }
             return $this->generateResourceNotFoundError('Packages');
         }
 
