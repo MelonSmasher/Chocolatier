@@ -62,6 +62,7 @@ class FixLatestPackages extends Command
                                 $highest->is_absolute_latest_version = false;
                                 $highest->save();
                                 $highest = $package;
+                                $highestVer = new SemVer\Version($package->version);
                                 $this->info($id->package_id . ': found new highest version: ' . $highestVer . ' < ' . $cVer);
                             } else {
                                 $package->is_absolute_latest_version = false;
