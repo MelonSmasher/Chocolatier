@@ -43,11 +43,13 @@ class CachePackage implements ShouldQueue
         $client = new Client([]);
 
         $dlRequest = new Request('GET', $this->packageUrl);
-        $client->send($dlRequest, ['sink' => $fileStream, 'allow_redirects' => true]);
-
+        $res = $client->send($dlRequest, ['sink' => $fileStream, 'allow_redirects' => true, 'http_errors' => false]);
         Storage::makeDirectory('packages');
-        $nupkg = new NupkgFile($filePath);
-        $nupkg->savePackage($user);
-        unlink($filePath);
+
+        if($res->getStatusCode() === 200) {
+            $nupkg = new NupkgFile($filePath);
+            $nupkg->savePackage($user);
+            unlink($filePath);
+        }
     }
 }

@@ -59,12 +59,16 @@ class UpdatePackages extends Command
                 $tmpFileStream = fopen($tmpFilePath, 'w+');
                 $client = new Client([]);
                 $dlRequest = new Request('GET', $packageUrl);
-                $client->send($dlRequest, ['sink' => $tmpFileStream, 'allow_redirects' => true]);
-                $tmpNupkg = new NupkgFile($tmpFilePath);
-                if($tmpNupkg->getNuspec()->version != $pkg->version) {
-                    $tmpNupkg->savePackage($user);
-                    unlink($tmpFilePath);
-                    $this->info($pkg->package_id . ': updated');
+                $res = $client->send($dlRequest, ['sink' => $tmpFileStream, 'allow_redirects' => true, 'http_errors' => false]);
+                if($res->getStatusCode() === 200) {
+                    $tmpNupkg = new NupkgFile($tmpFilePath);
+                    if ($tmpNupkg->getNuspec()->version != $pkg->version) {
+                        $tmpNupkg->savePackage($user);
+                        unlink($tmpFilePath);
+                        $this->info($pkg->package_id . ': updated');
+                    }
+                } else {
+                    $this->warn($pkg->package_id . ': not found on chocolatey.org');
                 }
                 $processed[] = $pkg->package_id;
             }
