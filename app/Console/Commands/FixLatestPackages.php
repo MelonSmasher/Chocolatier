@@ -51,23 +51,27 @@ class FixLatestPackages extends Command
 
         foreach ($packageIds as $id) {
             $packages = NugetPackage::where('is_absolute_latest_version', true)->where('package_id', $id->package_id)->get();
-            if (count($packages) > 1) {
-                $highest = $packages[0];
-                $highestVer = new SemVer\Version($packages[0]->version);
-                foreach ($packages as $package) {
-                    if ($package->id !== $highest->id) {
-                        $cVer = new SemVer\Version($package->version);
-                        if ($highestVer->lt($cVer)) {
-                            $highest->is_absolute_latest_version = false;
-                            $highest->save();
-                            $highest = $package;
-                            $this->info($id->package_id . ': found new highest version: ' . $highestVer . ' < ' . $cVer);
-                        } else {
-                            $package->is_absolute_latest_version = false;
-                            $package->save();
+            try {
+                if (count($packages) > 1) {
+                    $highest = $packages[0];
+                    $highestVer = new SemVer\Version($packages[0]->version);
+                    foreach ($packages as $package) {
+                        if ($package->id !== $highest->id) {
+                            $cVer = new SemVer\Version($package->version);
+                            if ($highestVer->lt($cVer)) {
+                                $highest->is_absolute_latest_version = false;
+                                $highest->save();
+                                $highest = $package;
+                                $this->info($id->package_id . ': found new highest version: ' . $highestVer . ' < ' . $cVer);
+                            } else {
+                                $package->is_absolute_latest_version = false;
+                                $package->save();
+                            }
                         }
                     }
                 }
+            } catch (SemVer\Exceptions\InvalidVersionException $e) {
+                $this->warn($e->getMessage().' skipping...');
             }
             $bar->advance();
         }
