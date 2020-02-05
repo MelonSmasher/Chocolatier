@@ -23,7 +23,7 @@ class NuspecFile
     public $language;
     public $tags;
 
-    private function __construct()
+    public function __construct()
     {
     }
 

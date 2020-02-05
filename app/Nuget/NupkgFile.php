@@ -1,5 +1,6 @@
 <?php namespace App\Nuget;
 
+use App\Model\User;
 use Chumper\Zipper\Zipper;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -78,10 +79,10 @@ class NupkgFile
         return $contents;
     }
 
-    public function savePackage($uploader)
+    public function savePackage($uploader = null)
     {
         if ($uploader === null) {
-            return false;
+            $uploader = User::where('email', 'system-cache@repo.local')->first();
         }
 
         // read specs

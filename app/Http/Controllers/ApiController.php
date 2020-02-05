@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CachePackage;
 use DOMDocument;
 
 
@@ -94,7 +95,7 @@ class ApiController extends Controller
             if ($nextVersion) {
                 if (!$nextVersion->is_latest_version) $nextVersion->is_latest_version = $is_latest_version;
                 if (!$nextVersion->is_absolute_latest_version) $nextVersion->is_absolute_latest_version = $is_absolute_latest_version;
-                if($nextVersion->isDirty()) $nextVersion->save();
+                if ($nextVersion->isDirty()) $nextVersion->save();
             }
             return Response::make('No Content', 204);
         }
@@ -110,24 +111,31 @@ class ApiController extends Controller
      */
     public function download($id, $version = null)
     {
+        $packageUrl = 'https://chocolatey.org/api/v2/package/' . $id . '/';
+
         if (strtolower($version) === 'latest' || empty($version)) {
             $package = NugetPackage::where('package_id', $id)
                 ->where('is_latest_version', true)
                 ->orderBy('updated_at', 'desc')
                 ->first();
+
         } else {
             $package = NugetPackage::where('package_id', $id)
                 ->where('version', $version)
                 ->first();
+            $packageUrl = $packageUrl . $version;
         }
+
         if ($package === null) {
-            return Response::make('not found', 404);
+            CachePackage::dispatch($packageUrl);
+            // If we don't have it refer to chocolatey.org
+            return redirect($packageUrl, 302);
         }
+
         $package->version_download_count++;
         $package->save();
 
-        foreach (NugetPackage::where('package_id', $id)
-                     ->get() as $vPackage) {
+        foreach (NugetPackage::where('package_id', $id)->get() as $vPackage) {
             $vPackage->download_count++;
             $vPackage->save();
         }

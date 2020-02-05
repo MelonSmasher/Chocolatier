@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use App\Model\User;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 
 class CreateUser extends Command
@@ -43,16 +44,15 @@ class CreateUser extends Command
         $password = $this->argument('password');
 
         $this->info('Generating API key...');
-        do
-        {
-            $key = str_random(32);
-        } while(User::where('apikey', $key)->count() > 0);
+        do {
+            $key = Str::random(32);
+        } while (User::where('apikey', $key)->count() > 0);
 
         $this->info('Saving user...');
         $user = new User;
         $user->name = $name;
         $user->email = $email;
-        $user->password = Hash::make(empty($password) ? str_random() : $password);
+        $user->password = Hash::make(empty($password) ? Str::random(16) : $password);
 
         $user->apikey = $key;
         $user->save();

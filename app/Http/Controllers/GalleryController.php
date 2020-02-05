@@ -56,9 +56,17 @@ class GalleryController extends Controller
         return view('gallery.index', $data);
     }
 
-    public function showPackage($name)
+    public function showPackage($name, $version = null)
     {
-        $package = NugetPackage::where('package_id', $name)->first();
+        if (!empty($version)) {
+            $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
+            if (empty($package)) {
+                $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
+            }
+        } else {
+            $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
+        }
+
         return view('gallery.show')
             ->with('package', $package)
             ->with('versions', $package->versions());

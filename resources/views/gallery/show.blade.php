@@ -90,13 +90,14 @@
                     @foreach($versions as  $version)
                         <tr class="{{ $version->version == $package->version ? 'bold' : '' }}">
                             <td>
-                                {{ $version->version }}
+                                <a href="{{route('packages.version.show', ['name' => $package->package_id, 'version' => $version->version])}}">{{ $version->version }}
                                 @if($version->version == $package->version)
                                     (this version)
                                 @endif
                                 @if($version->is_latest_version)
                                     (latest stable)
                                 @endif
+                                </a>
                             </td>
                             <td>
                                 {{ $version->version_download_count }}

@@ -20,8 +20,15 @@ Route::group(['as' => 'api.'], function () {
     Route::get('/download/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
 
     Route::group(['prefix' => '/v2'], function () {
-        Route::get('/download/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
-        Route::get('/download/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
+
+        Route::group(['prefix' => '/download'], function () {
+            Route::get('/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
+            Route::get('/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
+        });
+        Route::group(['prefix' => '/package'], function () {
+            Route::get('/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
+            Route::get('/{id}', ['as' => 'download', 'uses' => 'ApiController@download']);
+        });
 
         Route::group(['middleware' => ['auth.nuget', 'file.nuget:package']], function () {
             Route::put('/upload', ['as' => 'upload', 'uses' => 'ApiController@upload']);
