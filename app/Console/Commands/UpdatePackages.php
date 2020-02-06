@@ -49,18 +49,20 @@ class UpdatePackages extends Command
         $processed = [];
         $packages = NugetPackage::where('is_absolute_latest_version', true)->get();
 
+        $ignore = config('choco.ignore_updates_on', []);
+
         $bar = $this->output->createProgressBar(count($packages));
         $bar->start();
 
         foreach ($packages as $pkg) {
-            if (!in_array($pkg->package_id, $processed, true)) {
+            if (!in_array($pkg->package_id, $processed, true) && !in_array($pkg->package_id, $ignore, true)) {
                 $packageUrl = 'https://chocolatey.org/api/v2/package/' . $pkg->package_id . '/';
                 $tmpFilePath = '/tmp/' . Str::random(32) . '.nupkg';
                 $tmpFileStream = fopen($tmpFilePath, 'w+');
                 $client = new Client([]);
                 $dlRequest = new Request('GET', $packageUrl);
                 $res = $client->send($dlRequest, ['sink' => $tmpFileStream, 'allow_redirects' => true, 'http_errors' => false]);
-                if($res->getStatusCode() === 200) {
+                if ($res->getStatusCode() === 200) {
                     $tmpNupkg = new NupkgFile($tmpFilePath);
                     if ($tmpNupkg->getNuspec()->version != $pkg->version) {
                         $tmpNupkg->savePackage($user);

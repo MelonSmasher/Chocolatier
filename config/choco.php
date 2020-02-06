@@ -15,4 +15,5 @@ return [
      * Packages
      */
     'hash_algorithm' => env('packages_hash_algorithm', 'SHA512'),
+    'ignore_updates_on' => explode(',', env('IGNORE_UPDATE_PACKAGES', ''))
 ];
