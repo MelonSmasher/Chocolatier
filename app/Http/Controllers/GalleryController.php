@@ -62,18 +62,15 @@ class GalleryController extends Controller
         if (!empty($version)) {
             $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
             if (empty($package)) {
-                $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
+                CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name . '/' . $version);
+                $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
             }
         } else {
             $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
         }
 
         if (empty($package)) {
-            if (empty($version)) {
-                CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name);
-            } else {
-                CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name . '/' . $version);
-            }
+            CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name);
             $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
         }
 
