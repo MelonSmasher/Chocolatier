@@ -129,7 +129,7 @@ class ApiController extends Controller
         }
 
         if ($package === null) {
-            CachePackage::dispatch($packageUrl);
+            CachePackage::dispatch($packageUrl, $id);
             // If we don't have it refer to chocolatey.org
             return redirect($packageUrl, 302);
         }
@@ -208,7 +208,7 @@ class ApiController extends Controller
             $dlRequest = new Request('GET', $packageUrl);
             $res = $client->send($dlRequest, ['allow_redirects' => true, 'http_errors' => false]);
             if ($res->getStatusCode() === 200) {
-                CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version);
+                CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
                 return Response::make($res->getBody(), 200, ['Content-Type' => 'application/atom+xml;type=feed;charset=utf-8']);
             }
             return $this->generateResourceNotFoundError('Packages');

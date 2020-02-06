@@ -20,14 +20,17 @@ class CachePackage implements ShouldQueue
 
     protected $packageUrl;
 
+    protected $packageId;
+
     /**
      * CachePackage constructor.
      * @param String $packageUrl
      * @return void
      */
-    public function __construct(String $packageUrl)
+    public function __construct(String $packageUrl, String $packageId)
     {
         $this->packageUrl = $packageUrl;
+        $this->packageId = $packageId;
     }
 
     /**
@@ -37,19 +40,22 @@ class CachePackage implements ShouldQueue
      */
     public function handle()
     {
-        $user = User::where('email', 'system-cache@repo.local')->first();
-        $filePath = '/tmp/' . Str::random(32) . '.nupkg';
-        $fileStream = fopen($filePath, 'w+');
-        $client = new Client([]);
+        $ignore = config('choco.ignore_updates_on', []);
+        if (!in_array($this->packageId, $ignore, true)) {
+            $user = User::where('email', 'system-cache@repo.local')->first();
+            $filePath = '/tmp/' . Str::random(32) . '.nupkg';
+            $fileStream = fopen($filePath, 'w+');
+            $client = new Client([]);
 
-        $dlRequest = new Request('GET', $this->packageUrl);
-        $res = $client->send($dlRequest, ['sink' => $fileStream, 'allow_redirects' => true, 'http_errors' => false]);
-        Storage::makeDirectory('packages');
+            $dlRequest = new Request('GET', $this->packageUrl);
+            $res = $client->send($dlRequest, ['sink' => $fileStream, 'allow_redirects' => true, 'http_errors' => false]);
+            Storage::makeDirectory('packages');
 
-        if($res->getStatusCode() === 200) {
-            $nupkg = new NupkgFile($filePath);
-            $nupkg->savePackage($user);
-            unlink($filePath);
+            if ($res->getStatusCode() === 200) {
+                $nupkg = new NupkgFile($filePath);
+                $nupkg->savePackage($user);
+                unlink($filePath);
+            }
         }
     }
 }
