@@ -66,9 +66,9 @@ class UpdatePackages extends Command
                     $tmpNupkg = new NupkgFile($tmpFilePath);
                     if ($tmpNupkg->getNuspec()->version != $pkg->version) {
                         $tmpNupkg->savePackage($user);
-                        unlink($tmpFilePath);
                         $this->info($pkg->package_id . ': updated');
                     }
+                    unlink($tmpFilePath);
                 } else {
                     $this->warn($pkg->package_id . ': not found on chocolatey.org');
                 }
