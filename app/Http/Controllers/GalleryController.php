@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CachePackage;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Input;
 use App\Choco\NuGet\NugetPackage;
@@ -65,6 +66,15 @@ class GalleryController extends Controller
             }
         } else {
             $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
+        }
+
+        if (empty($package)) {
+            CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name);
+            $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
+        }
+
+        if (empty($package)) {
+            return response('Could not find that package!', 404);
         }
 
         return view('gallery.show')
