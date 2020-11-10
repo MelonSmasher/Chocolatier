@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Choco\Atom\AtomElement;
+use App\Choco\NuGet\NugetPackage;
+use App\Http\Requests\NugetRequest;
 use App\Jobs\CachePackage;
+use App\Nuget\NupkgFile;
+use App\Repositories\NugetQueryBuilder;
 use DOMDocument;
-
-
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
-use App\Choco\Atom\AtomElement;
-use App\Http\Requests\NugetRequest;
-use App\Nuget\NupkgFile;
-use App\Repositories\NugetQueryBuilder;
-use App\Choco\NuGet\NugetPackage;
-Use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
+
 
 class ApiController extends Controller
 {
@@ -202,22 +201,34 @@ class ApiController extends Controller
             ->where('version', $version)
             ->first();
 
-        if ($package == null) {
-            $packageUrl = 'https://chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
+        if ($package) {
+            $atomElement = $package->getAtomElement();
+            $this->addPackagePropertiesToAtomElement($package, $this->queryBuilder->getAllProperties(), $atomElement);
+            return Response::atom($atomElement->getDocument(route('api.index')));
+        }
+
+        if ($package == null && !empty($version)) {
+
+            $license_id = config('choco.license_id', false);
+            if ($license_id) {
+                $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
+            } else {
+                $packageUrl = 'https://chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
+            }
+
             $client = new Client([]);
             $dlRequest = new Request('GET', $packageUrl);
             $res = $client->send($dlRequest, ['allow_redirects' => true, 'http_errors' => false]);
             if ($res->getStatusCode() === 200) {
-                CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
+                if ($license_id) {
+                    CachePackage::dispatch('https://customer:' . $license_id . '@licensedpackages.chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
+                } else {
+                    CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
+                }
                 return Response::make($res->getBody(), 200, ['Content-Type' => 'application/atom+xml;type=feed;charset=utf-8']);
             }
-            return $this->generateResourceNotFoundError('Packages');
         }
-
-        $atomElement = $package->getAtomElement();
-        $this->addPackagePropertiesToAtomElement($package, $this->queryBuilder->getAllProperties(), $atomElement);
-
-        return Response::atom($atomElement->getDocument(route('api.index')));
+        return $this->generateResourceNotFoundError('Packages');
     }
 
     /**
