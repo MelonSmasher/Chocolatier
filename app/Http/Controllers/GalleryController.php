@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Choco\NuGet\NugetPackage;
 use App\Jobs\CachePackage;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Input;
-use App\Choco\NuGet\NugetPackage;
 
 class GalleryController extends Controller
 {
@@ -62,7 +61,17 @@ class GalleryController extends Controller
         if (!empty($version)) {
             $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
             if (empty($package)) {
-                CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name . '/' . $version, $name);
+                if (strtolower($version) !== 'latest') {
+                    $packageSlug = '/api/v2/package/' . $name . '/' . $version;
+                    $license_id = config('choco.license_id', false);
+                    if ($license_id) {
+                        $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org' . $packageSlug;
+                    } else {
+                        $packageUrl = 'https://chocolatey.org' . $packageSlug;
+                    }
+                    CachePackage::dispatchNow($packageUrl, $name);
+                }
+
                 $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
             }
         } else {

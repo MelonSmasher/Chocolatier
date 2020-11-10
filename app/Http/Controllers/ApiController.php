@@ -112,7 +112,7 @@ class ApiController extends Controller
      */
     public function download($id, $version = null)
     {
-        $packageUrl = 'https://chocolatey.org/api/v2/package/' . $id . '/';
+
 
         if (strtolower($version) === 'latest' || empty($version)) {
             $package = NugetPackage::where('package_id', $id)
@@ -124,13 +124,21 @@ class ApiController extends Controller
             $package = NugetPackage::where('package_id', $id)
                 ->where('version', $version)
                 ->first();
-            $packageUrl = $packageUrl . $version;
         }
 
         if ($package === null) {
-            CachePackage::dispatch($packageUrl, $id);
+            if (!empty($version) && strtolower($version) !== 'latest') {
+                $packageSlug = '/api/v2/package/' . $id . '/' . $version;
+                $license_id = config('choco.license_id', false);
+                if ($license_id) {
+                    $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org' . $packageSlug;
+                } else {
+                    $packageUrl = 'https://chocolatey.org' . $packageSlug;
+                }
+                CachePackage::dispatch($packageUrl, $id);
+            }
             // If we don't have it refer to chocolatey.org
-            return redirect($packageUrl, 302);
+            return Response::make('not found', 404);
         }
 
         $package->version_download_count++;
