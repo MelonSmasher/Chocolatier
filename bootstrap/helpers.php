@@ -27,11 +27,18 @@ function createUserAccount($name, $email, $password = null)
 function generateChocoPackageUrl($id, $version)
 {
     $packageSlug = '/api/v2/package/' . $id . '/' . $version;
+    return 'https://chocolatey.org' . $packageSlug;
+}
+
+
+function generateLicensedChocoPackageUrl($id, $version)
+{
+    $packageSlug = '/api/v2/package/' . $id . '/' . $version;
     $license_id = config('choco.license_id', false);
     if ($license_id) {
         return 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org' . $packageSlug;
     }
-    return 'https://chocolatey.org' . $packageSlug;
+    return false;
 }
 
 function cachePackage($id, $version)
@@ -59,6 +66,26 @@ function cachePackage($id, $version)
                     return NugetPackage::where('package_id', $id)
                         ->where('version', $version)
                         ->first();
+                } else {
+                    // Try to get the file from the licensed choco repo
+                    $licensedUrl = generateLicensedChocoPackageUrl($id, $version);
+                    if ($licensedUrl) {
+                        $client = new Client([]);
+                        $dlRequest = new Request('GET', $licensedUrl);
+                        $filePath = '/tmp/' . Str::random(32) . '.nupkg';
+                        $fileStream = fopen($filePath, 'w+');
+                        $res = $client->send($dlRequest, ['sink' => $fileStream, 'allow_redirects' => true, 'http_errors' => false]);
+                        Storage::makeDirectory('packages');
+                        if ($res->getStatusCode() === 200) {
+                            $nupkg = new NupkgFile($filePath);
+                            $nupkg->savePackage($user);
+                            unlink($filePath);
+                            Cache::forget($cache_key);
+                            return NugetPackage::where('package_id', $id)
+                                ->where('version', $version)
+                                ->first();
+                        }
+                    }
                 }
                 return false;
             } else {
