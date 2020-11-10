@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Choco\Atom\AtomElement;
 use App\Choco\NuGet\NugetPackage;
 use App\Http\Requests\NugetRequest;
-use App\Jobs\CachePackage;
 use App\Nuget\NupkgFile;
 use App\Repositories\NugetQueryBuilder;
 use DOMDocument;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -112,8 +109,6 @@ class ApiController extends Controller
      */
     public function download($id, $version = null)
     {
-
-
         if (strtolower($version) === 'latest' || empty($version)) {
             $package = NugetPackage::where('package_id', $id)
                 ->where('is_latest_version', true)
@@ -126,19 +121,11 @@ class ApiController extends Controller
                 ->first();
         }
 
-        if ($package === null) {
+        if (empty($package)) {
             if (!empty($version) && strtolower($version) !== 'latest') {
-                $packageSlug = '/api/v2/package/' . $id . '/' . $version;
-                $license_id = config('choco.license_id', false);
-                if ($license_id) {
-                    $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org' . $packageSlug;
-                } else {
-                    $packageUrl = 'https://chocolatey.org' . $packageSlug;
-                }
-                CachePackage::dispatch($packageUrl, $id);
+                $package = cachePackage($id, $version);
             }
-            // If we don't have it refer to chocolatey.org
-            return Response::make('not found', 404);
+            if (empty($package)) return Response::make('not found', 404);
         }
 
         $package->version_download_count++;
@@ -209,34 +196,16 @@ class ApiController extends Controller
             ->where('version', $version)
             ->first();
 
-        if ($package) {
-            $atomElement = $package->getAtomElement();
-            $this->addPackagePropertiesToAtomElement($package, $this->queryBuilder->getAllProperties(), $atomElement);
-            return Response::atom($atomElement->getDocument(route('api.index')));
+        if (empty($package)) {
+            if (!empty($version) && strtolower($version) !== 'latest') {
+                $package = cachePackage($id, $version);
+            }
+            if (empty($package)) return $this->generateResourceNotFoundError('Packages');
         }
 
-        if ($package == null && !empty($version)) {
-
-            $license_id = config('choco.license_id', false);
-            if ($license_id) {
-                $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
-            } else {
-                $packageUrl = 'https://chocolatey.org/api/v2/Packages(Id=\'' . $id . '\',Version=\'' . $version . '\')';
-            }
-
-            $client = new Client([]);
-            $dlRequest = new Request('GET', $packageUrl);
-            $res = $client->send($dlRequest, ['allow_redirects' => true, 'http_errors' => false]);
-            if ($res->getStatusCode() === 200) {
-                if ($license_id) {
-                    CachePackage::dispatch('https://customer:' . $license_id . '@licensedpackages.chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
-                } else {
-                    CachePackage::dispatch('https://chocolatey.org/api/v2/package/' . $id . '/' . $version, $id);
-                }
-                return Response::make($res->getBody(), 200, ['Content-Type' => 'application/atom+xml;type=feed;charset=utf-8']);
-            }
-        }
-        return $this->generateResourceNotFoundError('Packages');
+        $atomElement = $package->getAtomElement();
+        $this->addPackagePropertiesToAtomElement($package, $this->queryBuilder->getAllProperties(), $atomElement);
+        return Response::atom($atomElement->getDocument(route('api.index')));
     }
 
     /**

@@ -62,31 +62,13 @@ class GalleryController extends Controller
             $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
             if (empty($package)) {
                 if (strtolower($version) !== 'latest') {
-                    $packageSlug = '/api/v2/package/' . $name . '/' . $version;
-                    $license_id = config('choco.license_id', false);
-                    if ($license_id) {
-                        $packageUrl = 'https://customer:' . $license_id . '@licensedpackages.chocolatey.org' . $packageSlug;
-                    } else {
-                        $packageUrl = 'https://chocolatey.org' . $packageSlug;
-                    }
-                    CachePackage::dispatchNow($packageUrl, $name);
+                    $package = cachePackage($name, $version);
                 }
-
-                $package = NugetPackage::where('package_id', $name)->where('version', $version)->first();
+                if (empty($package)) return response('Could not find that package!', 404);
             }
         } else {
             $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
         }
-
-        if (empty($package)) {
-            CachePackage::dispatchNow('https://chocolatey.org/api/v2/package/' . $name, $name);
-            $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
-        }
-
-        if (empty($package)) {
-            return response('Could not find that package!', 404);
-        }
-
         return view('gallery.show')
             ->with('package', $package)
             ->with('versions', $package->versions());
