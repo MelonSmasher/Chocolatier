@@ -69,8 +69,11 @@ class GalleryController extends Controller
         } else {
             $package = NugetPackage::where('package_id', $name)->where('is_absolute_latest_version', true)->first();
         }
-        return view('gallery.show')
-            ->with('package', $package)
-            ->with('versions', $package->versions());
+        if ($package) {
+            return view('gallery.show')
+                ->with('package', $package)
+                ->with('versions', $package->versions());
+        }
+        return response('Could not find that package!', 404);
     }
 }

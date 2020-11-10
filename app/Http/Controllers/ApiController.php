@@ -125,7 +125,7 @@ class ApiController extends Controller
             if (!empty($version) && strtolower($version) !== 'latest') {
                 $package = cachePackage($id, $version);
             }
-            if (empty($package)) return Response::make('not found', 404);
+            if (!$package) return Response::make('not found', 404);
         }
 
         $package->version_download_count++;
@@ -200,7 +200,7 @@ class ApiController extends Controller
             if (!empty($version) && strtolower($version) !== 'latest') {
                 $package = cachePackage($id, $version);
             }
-            if (empty($package)) return $this->generateResourceNotFoundError('Packages');
+            if (!$package) return $this->generateResourceNotFoundError('Packages');
         }
 
         $atomElement = $package->getAtomElement();
