@@ -59,24 +59,46 @@ function getLatestVersion($id)
 {
     $latestUrl = generateChocoLatestPackageUrl(strtolower($id));
     $client = new Client();
-    try {
-        if (in_array(strtolower($id), config('choco.ignore_updates_on', []))) throw new Exception('Local only package!');
-        $res = $client->get($latestUrl);
-        $xmlString = $res->getBody()->getContents();
-        $xml = json_decode(json_encode(simplexml_load_string($xmlString)), true);
-        $package_url = $xml['entry']['content']['@attributes']['src'];
-        $urlParts = explode('/', parse_url($package_url, PHP_URL_PATH));
-        $version = $urlParts[count($urlParts) - 1];
-        $id = $urlParts[count($urlParts) - 2];
-        if (empty($id) || empty($version)) return null;
-        return ['id' => $id, 'version' => $version];
-    } catch (Exception $e) {
-        // If something went wrong return the latest version from the DB
-        $package = NugetPackage::where('package_id', $id)
-            ->where('is_latest_version', true)
-            ->first();
-        if (!empty($package)) return ['id' => $package->package_id, 'version' => $package->version];
-        return null;
+    $cache_key = strtolower('check-latest-' . $id);
+    $inProgress = Cache::get($cache_key);
+    if (empty($inProgress)) {
+        Cache::put($cache_key, true, 60);
+        try {
+            if (in_array(strtolower($id), config('choco.ignore_updates_on', []))) throw new Exception('Local only package!');
+            $res = $client->get($latestUrl);
+            $xmlString = $res->getBody()->getContents();
+            $xml = json_decode(json_encode(simplexml_load_string($xmlString)), true);
+            $package_url = $xml['entry']['content']['@attributes']['src'];
+            $urlParts = explode('/', parse_url($package_url, PHP_URL_PATH));
+            $version = $urlParts[count($urlParts) - 1];
+            $id = $urlParts[count($urlParts) - 2];
+            if (empty($id) || empty($version)) return null;
+            Cache::forget($cache_key);
+            return ['id' => $id, 'version' => $version];
+        } catch (Exception $e) {
+            // If something went wrong return the latest version from the DB
+            $package = NugetPackage::where('package_id', $id)
+                ->where('is_latest_version', true)
+                ->first();
+            if (!empty($package)) return ['id' => $package->package_id, 'version' => $package->version];
+            Cache::forget($cache_key);
+            return null;
+        }
+    } else {
+        $count = 0;
+        while ($count <= 5) {
+            $status = Cache::get($cache_key);
+            if (!empty($status)) {
+                usleep(100);
+            } else {
+                $package = NugetPackage::where('package_id', $id)
+                    ->where('is_latest_version', true)
+                    ->first();
+                if (!empty($package)) return ['id' => $package->package_id, 'version' => $package->version];
+                return null;
+            }
+            $count++;
+        }
     }
 }
 
