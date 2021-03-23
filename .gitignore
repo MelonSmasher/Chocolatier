@@ -7,3 +7,5 @@ Homestead.yaml
 .idea/
 
 laradock/
+
+.DS_Store

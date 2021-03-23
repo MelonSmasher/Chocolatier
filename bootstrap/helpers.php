@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+function getStringBetween($string, $start, $end)
+{
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
+}
 
 function createUserAccount($name, $email, $password = null)
 {
@@ -30,6 +39,11 @@ function generateChocoPackageUrl($id, $version)
     return 'https://chocolatey.org' . $packageSlug;
 }
 
+function generateChocoLatestPackageUrl($id)
+{
+    $packageSlug = '/api/v2/Packages()?$filter=(tolower(Id)%20eq%20\'' . $id . '\')%20and%20IsLatestVersion';
+    return 'https://chocolatey.org' . $packageSlug;
+}
 
 function generateLicensedChocoPackageUrl($id, $version)
 {
@@ -41,9 +55,43 @@ function generateLicensedChocoPackageUrl($id, $version)
     return false;
 }
 
+function getLatestVersion($id)
+{
+    $latestUrl = generateChocoLatestPackageUrl(strtolower($id));
+    $client = new Client();
+    try {
+        $res = $client->get($latestUrl);
+        $xmlString = $res->getBody()->getContents();
+        $xml = json_decode(json_encode(simplexml_load_string($xmlString)), true);
+        $package_url = $xml['entry']['content']['@attributes']['src'];
+        $urlParts = explode('/', parse_url($package_url, PHP_URL_PATH));
+        $version = $urlParts[count($urlParts) - 1];
+        $id = $urlParts[count($urlParts) - 2];
+        if (empty($id) || empty($version)) return null;
+        return ['id' => $id, 'version' => $version];
+    } catch (Exception $e) {
+        // If something went wrong return the latest version from the DB
+        $package = NugetPackage::where('package_id', $id)
+            ->where('is_latest_version', true)
+            ->first();
+        if (!empty($package)) return ['id' => $package->package_id, 'version' => $package->version];
+        return null;
+    }
+}
+
 function cachePackage($id, $version)
 {
-    if (!empty($id) && !empty($version) && strtolower($version) !== 'latest') {
+    if (!empty($id) && strtolower($version) === 'latest') {
+        $latest = getLatestVersion($id);
+        $version = empty($latest) ? null : $latest['version'];
+        $package = NugetPackage::where('package_id', $id)
+            ->where('version', $version)
+            ->first();
+        // If the package exists return it
+        if (!empty($package)) return $package;
+    }
+
+    if (!empty($id) && !empty($version)) {
         if (!in_array($id, config('choco.ignore_updates_on', []), true)) {
             $cache_key = strtolower('caching-' . $id . '-' . $version);
             $inProgress = Cache::get($cache_key);

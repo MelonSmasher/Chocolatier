@@ -8,9 +8,12 @@ use App\Http\Requests\NugetRequest;
 use App\Nuget\NupkgFile;
 use App\Repositories\NugetQueryBuilder;
 use DOMDocument;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class ApiController extends Controller
@@ -122,9 +125,10 @@ class ApiController extends Controller
         }
 
         if (empty($package)) {
-            if (!empty($version) && strtolower($version) !== 'latest') {
-                $package = cachePackage($id, $version);
-            }
+            if (empty($version)) $version = 'latest';
+
+            $package = cachePackage($id, $version);
+
             if (!$package) return Response::make('not found', 404);
         }
 
@@ -197,7 +201,7 @@ class ApiController extends Controller
             ->first();
 
         if (empty($package)) {
-            if (!empty($version) && strtolower($version) !== 'latest') {
+            if (!empty($version) && !empty($version)) {
                 $package = cachePackage($id, $version);
             }
             if (!$package) return $this->generateResourceNotFoundError('Packages');
@@ -211,11 +215,35 @@ class ApiController extends Controller
     /**
      * Display all packages.
      *
+     * @param Request $request
      * @return mixed
      */
-    public function packages()
+    public function packages(Request $request)
     {
-        $eloquent = $this->queryBuilder->query(Input::get('$filter'), Input::get('$orderby'), trim(Input::get('id'), "' \t\n\r\0\x0B"));
+        $filter = Input::get('$filter');
+        $orderby = Input::get('$orderby');
+        $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
+
+        // Handle latest version request
+        if (Str::contains($filter, 'IsLatestVersion')) {
+            if (Str::contains($filter, 'tolower(Id) eq \'')) {
+                // Get the package ID
+                $id = getStringBetween($filter, 'tolower(Id) eq \'', '\')');
+                $key = 'latest-' . $id;
+                // Get the latest version from the cache
+                $version = Cache::remember($key, 21600, function () use ($id) {
+                    // If not in the cache determine the latest version and cache it
+                    $package = cachePackage($id, 'latest');
+                    return $package->version;
+                });
+                $package = NugetPackage::where('package_id', $id)
+                    ->where('version', $version)
+                    ->first();
+                return $this->displayPackages([$package], route('api.packages'), 'Packages', time(), 1);
+            }
+        }
+
+        $eloquent = $this->queryBuilder->query($filter, $orderby, $id);
         $packages = $this->queryBuilder->limit($eloquent, Input::get('$top'), Input::get('$skip'))
             ->get();
 
