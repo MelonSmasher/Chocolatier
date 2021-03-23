@@ -60,6 +60,7 @@ function getLatestVersion($id)
     $latestUrl = generateChocoLatestPackageUrl(strtolower($id));
     $client = new Client();
     try {
+        if (in_array($id, config('choco.ignore_updates_on', []))) throw new Exception('Local only package!');
         $res = $client->get($latestUrl);
         $xmlString = $res->getBody()->getContents();
         $xml = json_decode(json_encode(simplexml_load_string($xmlString)), true);
