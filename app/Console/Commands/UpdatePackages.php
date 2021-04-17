@@ -56,7 +56,7 @@ class UpdatePackages extends Command
 
         foreach ($packages as $pkg) {
             if (!in_array($pkg->package_id, $processed, true) && !in_array($pkg->package_id, $ignore, true)) {
-                $packageUrl = 'https://chocolatey.org/api/v2/package/' . $pkg->package_id . '/';
+                $packageUrl = 'https://community.chocolatey.org/api/v2/package/' . $pkg->package_id . '/';
                 $tmpFilePath = '/tmp/' . Str::random(32) . '.nupkg';
                 $tmpFileStream = fopen($tmpFilePath, 'w+');
                 $client = new Client([]);

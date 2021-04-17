@@ -36,13 +36,13 @@ function createUserAccount($name, $email, $password = null)
 function generateChocoPackageUrl($id, $version)
 {
     $packageSlug = '/api/v2/package/' . $id . '/' . $version;
-    return 'https://chocolatey.org' . $packageSlug;
+    return 'https://community.chocolatey.org' . $packageSlug;
 }
 
 function generateChocoLatestPackageUrl($id)
 {
     $packageSlug = '/api/v2/Packages()?$filter=(tolower(Id)%20eq%20\'' . $id . '\')%20and%20IsLatestVersion';
-    return 'https://chocolatey.org' . $packageSlug;
+    return 'https://community.chocolatey.org' . $packageSlug;
 }
 
 function generateLicensedChocoPackageUrl($id, $version)
