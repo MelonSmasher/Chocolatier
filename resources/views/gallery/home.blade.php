@@ -14,7 +14,7 @@
 
                 </p>
 
-                <h2>Chocolatey Setup</h2>
+                <h4>Chocolatey Setup</h4>
 
                 <p>
                     To use this repository in an existing Chocolatey installation, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
@@ -30,7 +30,7 @@
                     <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}"</code></pre>
                 @endif
 
-                <h2>Chocolatey Installation</h2>
+                <h4>Chocolatey Installation</h4>
 
                 <p>
                     To install chocolatey from scratch:
