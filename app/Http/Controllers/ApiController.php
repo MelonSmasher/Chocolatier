@@ -213,9 +213,9 @@ class ApiController extends Controller {
         $filter = urldecode(Input::get('$filter'));
         $orderby = urldecode(Input::get('$orderby'));
         $id = trim(urldecode(Input::get('id')), "' \t\n\r\0\x0B");
-
+        dd($filter);
         if (trim(strtolower($filter)) == trim(strtolower("'(Id eq 'chocolatey') and IsLatestVersion'"))) {
-            dd($filter);
+
             // Handle latest version request
             $key = 'latest-chocolatey';
             // Get the latest version from the cache
