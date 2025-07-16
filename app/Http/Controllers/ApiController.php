@@ -225,7 +225,7 @@ class ApiController extends Controller
         $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
 
         // Handle latest version request
-        if (Str::contains($filter, 'IsLatestVersion')) {
+        if (Str::contains($filter, 'IsLatestVersion') or Str::contains($filter, 'IsAbsoluteLatestVersion')) {
             if (Str::contains($filter, 'tolower(Id) eq \'')) {
                 // Get the package ID
                 $id = getStringBetween($filter, 'tolower(Id) eq \'', '\')');
