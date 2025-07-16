@@ -73,8 +73,8 @@ class UpdatePackages extends Command
                     $this->warn($pkg->package_id . ': not found on chocolatey.org');
                 }
                 $processed[] = $pkg->package_id;
+                $bar->advance();
             }
-            $bar->advance();
         }
 
         $bar->finish();
