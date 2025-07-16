@@ -214,6 +214,20 @@ class ApiController extends Controller {
         $orderby = Input::get('$orderby');
         $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
 
+        if ($filter == "'(Id eq 'chocolatey') and IsLatestVersion'") {
+            $key = 'latest-chocolatey';
+            // Get the latest version from the cache
+            $version = Cache::remember($key, 21600, function () {
+                // If not in the cache determine the latest version and cache it
+                $package = cachePackage('chocolatey', 'latest');
+                return $package->version;
+            });
+            $package = NugetPackage::where('package_id', 'chocolatey')
+                ->where('version', $version)
+                ->first();
+            return $this->displayPackages([$package], route('api.packages'), 'Packages', time(), 1);
+        }
+
         // Handle latest version request
         if (Str::contains($filter, 'IsLatestVersion') or Str::contains($filter, 'IsAbsoluteLatestVersion')) {
             if (Str::contains($filter, 'tolower(Id) eq \'')) {
