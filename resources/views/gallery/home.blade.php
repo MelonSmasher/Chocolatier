@@ -23,6 +23,7 @@
                 Optionally delete the existing default source:
                 <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
 
+                Add the new source:
                 @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
                     <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p "{{ Config::get('app.site_password') }}"</code></pre>
                 @elseif (Config::get('app.site_user') != '')
