@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
-class ApiController extends Controller
-{
+class ApiController extends Controller {
     private $queryBuilder;
 
     /**
@@ -25,8 +24,7 @@ class ApiController extends Controller
      *
      * @param NugetQueryBuilder $queryBuilder
      */
-    public function __construct(NugetQueryBuilder $queryBuilder)
-    {
+    public function __construct(NugetQueryBuilder $queryBuilder) {
         $this->queryBuilder = $queryBuilder;
     }
 
@@ -35,8 +33,7 @@ class ApiController extends Controller
      *
      * @return mixed
      */
-    public function index()
-    {
+    public function index() {
         $document = new DOMDocument('1.0', 'utf-8');
         $document->formatOutput = true;
         $service = $document->appendChild($document->createElement('service'));
@@ -57,8 +54,7 @@ class ApiController extends Controller
      * @param NugetRequest $request
      * @return mixed
      */
-    public function upload(NugetRequest $request)
-    {
+    public function upload(NugetRequest $request) {
         $user = $request->getUser();
         $file = $request->getUploadedFile('package');
 
@@ -80,8 +76,7 @@ class ApiController extends Controller
      * @param $version
      * @return mixed
      */
-    public function delete(NugetRequest $request, $id, $version)
-    {
+    public function delete(NugetRequest $request, $id, $version) {
         $user = $request->getUser();
         if ($user) {
 
@@ -110,8 +105,7 @@ class ApiController extends Controller
      * @param $version
      * @return mixed
      */
-    public function download($id, $version = null)
-    {
+    public function download($id, $version = null) {
         if (strtolower($version) === 'latest' || empty($version)) {
             $package = NugetPackage::where('package_id', $id)
                 ->where('is_latest_version', true)
@@ -149,8 +143,7 @@ class ApiController extends Controller
      * @param $action
      * @return mixed
      */
-    public function search($action)
-    {
+    public function search($action) {
         if ($action == 'count' || $action == '$count') {
             $count = $this->processSearchQuery()
                 ->count();
@@ -164,8 +157,7 @@ class ApiController extends Controller
      *
      * @return mixed
      */
-    public function searchNoAction()
-    {
+    public function searchNoAction() {
         $eloquent = $this->processSearchQuery();
         $packages = $this->queryBuilder->limit($eloquent, Input::get('$top'), Input::get('$skip'))->get();
 
@@ -180,8 +172,7 @@ class ApiController extends Controller
      *
      * @return mixed
      */
-    public function metadata()
-    {
+    public function metadata() {
         return Response::view('api.metadata')
             ->header('Content-Type', 'application/xml');
     }
@@ -193,8 +184,7 @@ class ApiController extends Controller
      * @param $version
      * @return mixed
      */
-    public function package($id, $version)
-    {
+    public function package($id, $version) {
         /** @var NugetPackage $package */
         $package = NugetPackage::where('package_id', $id)
             ->where('version', $version)
@@ -218,8 +208,7 @@ class ApiController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function packages(Request $request)
-    {
+    public function packages(Request $request) {
         $filter = Input::get('$filter');
         $orderby = Input::get('$orderby');
         $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
@@ -258,8 +247,7 @@ class ApiController extends Controller
      *
      * @return mixed
      */
-    public function updates()
-    {
+    public function updates() {
         // Read input.
         $package_ids = explode('|', trim(Input::get('packageIds'), "'"));
         $package_versions = explode('|', trim(Input::get('versions'), "'"));
@@ -290,8 +278,7 @@ class ApiController extends Controller
         return $this->displayPackages($packages, route('api.updates'), 'GetUpdates', time(), count($packages));
     }
 
-    private function generateError($message, $language = 'en-US', $status)
-    {
+    private function generateError($message, $language = 'en-US', $status) {
         $document = new DOMDocument('1.0', 'utf-8');
         $document->formatOutput = true;
         $error = $document->appendChild($document->createElement('m:error'));
@@ -303,8 +290,7 @@ class ApiController extends Controller
         return Response::atom($document, $status, ['Content-Type' => 'application/xml;charset=utf-8']);
     }
 
-    private function generateResourceNotFoundError($segmentName)
-    {
+    private function generateResourceNotFoundError($segmentName) {
         return $this->generateError("Resource not found for the segment '$segmentName'.", 'en-US', 404);
     }
 
@@ -313,8 +299,7 @@ class ApiController extends Controller
      * @param array $properties
      * @param AtomElement $atomElement
      */
-    private function addPackagePropertiesToAtomElement($package, $properties, $atomElement)
-    {
+    private function addPackagePropertiesToAtomElement($package, $properties, $atomElement) {
         foreach ($properties as $property) {
             if (!$this->queryBuilder->isProperty($property)) {
                 continue;
@@ -347,8 +332,7 @@ class ApiController extends Controller
      * @param mixed $count
      * @return mixed
      */
-    private function displayPackages($packages, $id, $title, $updated, $count = false)
-    {
+    private function displayPackages($packages, $id, $title, $updated, $count = false) {
         $properties = Input::has('$select')
             ? array_filter(explode(',', Input::get('$select')), function ($name) {
                 return $this->queryBuilder->isProperty($name);
@@ -374,8 +358,7 @@ class ApiController extends Controller
      *
      * @return mixed
      */
-    private function processSearchQuery()
-    {
+    private function processSearchQuery() {
         // Read input.
         //@todo: Improve search_term querying (split words?)
         $search_term = trim(Input::get('searchTerm', ''), '\' \t\n\r\0\x0B');
@@ -400,5 +383,27 @@ class ApiController extends Controller
         }
 
         return $eloquent;
+    }
+
+    public function chocolateyInstall() {
+        $ps1Content = file_get_contents(public_path('ChocolateyInstall.ps1'));
+
+        $site_url = trim(rtrim(Config::get('app.url'), '/'));
+        $site_user = Config::get('app.site_user');
+        $site_password = Config::get('app.site_password', '');
+
+        $site_placeholder = '{{SITE_URL}}';
+        $site_user_placeholder = '{{SITE_USER}}';
+        $site_password_placeholder = '{{SITE_PASSWORD}}';
+
+        $ps1Content = str_replace($site_placeholder, $site_url, $ps1Content);
+        $ps1Content = str_replace($site_user_placeholder, $site_user, $ps1Content);
+        $ps1Content = str_replace($site_password_placeholder, $site_password, $ps1Content);
+
+
+        return Response::make($ps1Content, 200, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="ChocolateyInstall.ps1"'
+        ]);
     }
 }

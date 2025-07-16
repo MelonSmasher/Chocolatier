@@ -34,6 +34,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'site_user' => env('APP_SITE_USER', ''),
+    'site_password' => env('APP_SITE_PASSWORD', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
