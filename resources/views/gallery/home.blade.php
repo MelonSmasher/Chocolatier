@@ -11,14 +11,9 @@
                 <h1>What is {{Config::get('choco.shortname')}}?</h1>
                 <p>
                     {{Config::get('choco.shortname')}} is a NuGet package manager repository server.
-
                 </p>
 
                 <h4>Chocolatey Setup</h4>
-
-                <p>
-                    To use this repository in an existing Chocolatey installation, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
-                </p>
 
                 Optionally delete the existing default source:
                 <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
