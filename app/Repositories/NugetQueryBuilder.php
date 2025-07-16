@@ -126,46 +126,24 @@ class NugetQueryBuilder {
 
     private function splitEx($input)
     {
-        $result = [];
-        $len = strlen($input);
-        for ($i = 0; $i < $len;)
-        {
-            $j = $i;
-            do
-            {
-                $s = strpos($input, ',', $j);
-                $o = strpos($input, '(', $j);
-
-                if ($s === false)
-                {
-                    $s = $len;
-                }
-                else
-                {
-                    if ($o !== false && $o < $s)
-                    {
-                        $c = strpos($input, ')', $o);
-                        if ($c === false)
-                        {
-                            $o = false;
-                        }
-                        else
-                        {
-                            $j = $c + 1;
-                        }
-                    }
-                }
-            } while ($o !== false && $o < $s);
-
-            $new = substr($input, $i, $s - $i);
-            if (!empty($new))
-            {
-                array_push($result, $new);
-            }
-            $i = $s + 1;
+        // Early return for empty input
+        if (empty($input)) {
+            return [];
         }
 
-        return $result;
+        // Special case: If there are no commas, return the input as a single element
+        if (strpos($input, ',') === false) {
+            return [$input];
+        }
+
+        // Using a regex pattern to match commas outside of parentheses
+        $pattern = '/,(?![^()]*\))/';
+        $result = preg_split($pattern, $input);
+        
+        // Filter out empty elements
+        return array_filter($result, function($item) {
+            return trim($item) !== '';
+        });
     }
 
     public function query($filter, $orderBy, $id = null)
