@@ -13,25 +13,27 @@
                     {{Config::get('choco.shortname')}} is a NuGet package manager repository server.
                     To browse this repository, add <code>{{ route('api.index') }}</code> to your NuGet
                     Package Manager configuration:
-
-                    <code class="language-powershell">
-                        @if (Config::get('app.site_user') != null && Config::get('app.site_password') != null)
-                            choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
-                            "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p
-                            "{{ Config::get('app.site_password') }}"
-                        @elseif (Config::get('app.site_user') != null)
-                            choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
-                            "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p ""
-                        @elseif (Config::get('app.site_password') != null)
-                            choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
-                            "{{ route('api.index') }}" -u "" -p "{{ Config::get('app.site_password') }}"
-                        @else
-                            choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
-                            "{{ route('api.index') }}"
-                        @endif
-                    </code>
-
                 </p>
+                <pre>
+<code class="language-powershell">
+@if (Config::get('app.site_user') != null && Config::get('app.site_password') != null)
+        choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
+        "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p
+        "{{ Config::get('app.site_password') }}"
+    @elseif (Config::get('app.site_user') != null)
+        choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
+        "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p ""
+    @elseif (Config::get('app.site_password') != null)
+        choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
+        "{{ route('api.index') }}" -u "" -p "{{ Config::get('app.site_password') }}"
+    @else
+        choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s
+        "{{ route('api.index') }}"
+    @endif
+</code>
+                </pre>
+
+
             </div>
         </div>
 
