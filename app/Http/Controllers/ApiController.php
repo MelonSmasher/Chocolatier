@@ -210,9 +210,9 @@ class ApiController extends Controller {
      * @return mixed
      */
     public function packages(Request $request) {
-        $filter = Input::get('$filter');
-        $orderby = Input::get('$orderby');
-        $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
+        $filter = urldecode(Input::get('$filter'));
+        $orderby = urldecode(Input::get('$orderby'));
+        $id = trim(urldecode(Input::get('id')), "' \t\n\r\0\x0B");
 
         if ($filter == "'(Id eq 'chocolatey') and IsLatestVersion'") {
             return Response::make('OK', 200);
