@@ -21,10 +21,10 @@
                             Instructions
                         </div>
                         <div class="collapsible-body">
-                            <p>Optionally delete the existing default source:</p>
+                            Optionally delete the existing default source:
                             <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
 
-                            <p>Add the new source:</p>
+                            Add the new source:
                             @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
                                 <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p "{{ Config::get('app.site_password') }}"</code></pre>
                             @elseif (Config::get('app.site_user') != '')
@@ -46,7 +46,7 @@
                             Installation Instructions
                         </div>
                         <div class="collapsible-body">
-                            <p>To install chocolatey from scratch:</p>
+                            To install chocolatey from scratch:
                             @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
                                 <pre><code class="language-powershell">Set-ExecutionPolicy Bypass -Scope Process -Force; $webClient = New-Object System.Net.WebClient; $webClient.Headers.Add("Authorization", "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("{{ Config::get('app.site_user') }}:{{ Config::get('app.site_password') }}"))); iex ($webClient.DownloadString('{{route('api.index')}}/ChocolateyInstall.ps1'))</code></pre>
                             @elseif (Config::get('app.site_user') != '')
@@ -56,7 +56,6 @@
                             @else
                                 <pre><code class="language-powershell">Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('{{route('api.index')}}/ChocolateyInstall.ps1'))</code></pre>
                             @endif
-
 
                         Delete the existing default source:
                         <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
