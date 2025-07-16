@@ -11,8 +11,11 @@
                 <h1>What is {{Config::get('choco.shortname')}}?</h1>
                 <p>
                     {{Config::get('choco.shortname')}} is a NuGet package manager repository server.
-                    To browse this repository, add <code>{{ route('api.index') }}</code> to your NuGet
-                    Package Manager configuration:
+
+                </p>
+
+                <p>
+                    To use this repository, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
                 </p>
 
                 @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
@@ -26,7 +29,7 @@
                 @endif
 
                 <p>
-                    To install chocolatey from scratch, run:
+                    To install chocolatey from scratch:
                 </p>
 
                 @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
