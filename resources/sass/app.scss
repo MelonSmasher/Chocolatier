@@ -113,22 +113,27 @@ code.language-powershell {
     padding: 1rem;
     
     p {
-      margin: 0;
-      margin-bottom: 0.5rem;
+      margin: 0 !important;
+      margin-bottom: 0.25rem !important;
     }
     
     pre {
-      margin-top: 0.25rem;
-      margin-bottom: 1rem;
+      margin-top: 0 !important;
+      margin-bottom: 0.75rem !important;
     }
     
-    pre:last-child {
-      margin-bottom: 0.25rem;
+    p + pre {
+      margin-top: 0 !important;
+    }
+    
+    /* Standardize spacing between content blocks */
+    p:not(:first-child) {
+      margin-top: 0.75rem !important;
+    }
+    
+    pre code {
+      background-color: #272222;
+      color: #f1f1f1;
     }
   }
-}
-
-/* Fix vertical spacing in collapsible content */
-.collapsible-body p + pre {
-  margin-top: 0.25rem;
 }
