@@ -47,52 +47,43 @@ main {
 }
 
 /* PowerShell Syntax Highlighting */
-.language-powershell {
+code.language-powershell {
   display: block;
   overflow-x: auto;
   padding: 0.5em;
   background: #f4f4f4;
   color: #333333;
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  
-  .hljs-function,
-  .hljs-built_in {
-    color: #0000FF;
-  }
-  
-  .hljs-comment {
-    color: #008000;
-  }
-  
-  .hljs-keyword,
-  .hljs-literal,
-  .hljs-name {
-    color: #00008B;
-    font-weight: bold;
-  }
-  
-  .hljs-string {
-    color: #A31515;
-  }
-  
-  .hljs-variable,
-  .hljs-template-variable {
-    color: #0070C1;
-  }
-  
-  .hljs-number {
-    color: #09885A;
-  }
-  
-  .hljs-params {
-    color: #333333;
-  }
-  
-  pre & {
-    border-radius: 3px;
-    padding: 1em;
-    margin: .5em 0;
-  }
+}
+
+/* PowerShell Syntax Colors */
+.language-powershell .hljs-function,
+.language-powershell .hljs-built_in {
+  color: #0000FF;
+}
+
+.language-powershell .hljs-comment {
+  color: #008000;
+}
+
+.language-powershell .hljs-keyword,
+.language-powershell .hljs-literal,
+.language-powershell .hljs-name {
+  color: #00008B;
+  font-weight: bold;
+}
+
+.language-powershell .hljs-string {
+  color: #A31515;
+}
+
+.language-powershell .hljs-variable,
+.language-powershell .hljs-template-variable {
+  color: #0070C1;
+}
+
+.language-powershell .hljs-number {
+  color: #09885A;
 }
 
 /* Collapsible dropdown styling */
@@ -102,8 +93,9 @@ main {
   margin: 0.5rem 0 1rem 0;
   
   .collapsible-header {
-    background-color: #e3f2fd; // Light blue background
-    border: 1px solid #bbdefb; // Lighter border
+    background-color: #f7941d; /* Orange color from your theme */
+    color: white;
+    border: 1px solid #e68a1c;
     border-radius: 4px;
     padding: 0.8rem;
     
@@ -113,22 +105,29 @@ main {
   }
   
   .collapsible-body {
-    background-color: #f5f5f5; // Light gray background
+    background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-top: none;
     border-radius: 0 0 4px 4px;
     padding: 1rem;
     
     p {
-      margin: 0.5rem 0;
+      margin: 0;
+      margin-bottom: 0.5rem;
     }
     
     pre {
-      margin: 0.5rem 0 1.5rem 0;
+      margin-top: 0.25rem;
+      margin-bottom: 1rem;
     }
     
     pre:last-child {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
     }
   }
+}
+
+/* Fix vertical spacing in collapsible content */
+.collapsible-body p + pre {
+  margin-top: 0.25rem;
 }
