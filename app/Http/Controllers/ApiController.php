@@ -215,6 +215,7 @@ class ApiController extends Controller {
         $id = trim(Input::get('id'), "' \t\n\r\0\x0B");
 
         if ($filter == "'(Id eq 'chocolatey') and IsLatestVersion'") {
+            return Response::make('OK', 200);
             $key = 'latest-chocolatey';
             // Get the latest version from the cache
             $version = Cache::remember($key, 21600, function () {
