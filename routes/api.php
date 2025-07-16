@@ -22,7 +22,6 @@ Route::group(['as' => 'api.'], function () {
     Route::group(['prefix' => '/v2'], function () {
 
         Route::get('ChocolateyInstall.ps1', ['as' => 'ChocolateyInstall', 'uses' => 'ApiController@chocolateyInstall']);
-        Route::get('\/ChocolateyInstall.ps1', ['as' => 'Chocolatey-Install', 'uses' => 'ApiController@chocolateyInstall']);
 
         Route::group(['prefix' => '/download'], function () {
             Route::get('/{id}/{version}', ['as' => 'download', 'uses' => 'ApiController@download']);
