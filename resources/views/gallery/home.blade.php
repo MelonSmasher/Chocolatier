@@ -20,6 +20,9 @@
                     To use this repository in an existing Chocolatey installation, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
                 </p>
 
+                Optionally delete the existing default source:
+                <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
+
                 @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
                     <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p "{{ Config::get('app.site_password') }}"</code></pre>
                 @elseif (Config::get('app.site_user') != '')
@@ -44,6 +47,20 @@
                     <pre><code class="language-powershell">Set-ExecutionPolicy Bypass -Scope Process -Force; $webClient = New-Object System.Net.WebClient; $webClient.Headers.Add("Authorization", "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":{{ Config::get('app.site_password') }}"))); iex ($webClient.DownloadString('{{route('api.index')}}/ChocolateyInstall.ps1'))</code></pre>
                 @else
                     <pre><code class="language-powershell">Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('{{route('api.index')}}/ChocolateyInstall.ps1'))</code></pre>
+                @endif
+
+                Delete the existing default source:
+                <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
+
+                Add the new source:
+                @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
+                    <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p "{{ Config::get('app.site_password') }}"</code></pre>
+                @elseif (Config::get('app.site_user') != '')
+                    <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "{{ Config::get('app.site_user') }}" -p ""</code></pre>
+                @elseif (Config::get('app.site_password') != '')
+                    <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}" -u "" -p "{{ Config::get('app.site_password') }}"</code></pre>
+                @else
+                    <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}"</code></pre>
                 @endif
 
             </div>
