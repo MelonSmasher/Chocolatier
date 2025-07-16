@@ -13,12 +13,9 @@
                     {{Config::get('choco.shortname')}} is a NuGet package manager repository server.
                 </p>
 
-                <h4>Chocolatey Setup</h4>
-
                 <ul class="collapsible">
                     <li>
-                        <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>View Setup
-                            Instructions
+                        <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i><h4>Chocolatey Setup Instructions</h4>
                         </div>
                         <div class="collapsible-body">
                             Optionally delete the existing default source:
@@ -38,12 +35,10 @@
                     </li>
                 </ul>
 
-                <h4>Chocolatey Installation</h4>
-
                 <ul class="collapsible">
                     <li>
                         <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>View
-                            Installation Instructions
+                            <h4>Chocolatey Installation Instructions</h4>
                         </div>
                         <div class="collapsible-body">
                             To install chocolatey from scratch:
