@@ -35,6 +35,21 @@
                 </p>
             @endif
 
+            <ul class="collapsible">
+                <li>
+                    <div class="collapsible-header">
+                        <h5><i class="material-icons">keyboard_arrow_down</i> Install {{ $package->title }}</h5>
+                    </div>
+                    <div class="collapsible-body">
+                        Install the latest version of {{ $package->title }}:
+                        <pre><code class="language-powershell">choco install {{ $package->package_id }}</code></pre>
+
+                        Install the latest version {{$package->version}} of {{ $package->title }}:
+                        <pre><code class="language-powershell">choco install {{ $package->package_id }} --version {{ $package->version }}</code></pre>
+                    </div>
+                </li>
+            </ul>
+
             @if(!empty($package->getOwners()))
                 <h5>Owners</h5>
                 <ul>
