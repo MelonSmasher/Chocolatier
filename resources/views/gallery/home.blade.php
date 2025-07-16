@@ -14,8 +14,10 @@
 
                 </p>
 
+                <h2>Chocolatey Setup</h2>
+
                 <p>
-                    To use this repository, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
+                    To use this repository in an existing Chocolatey installation, add <code>{{ route('api.index') }}</code> to your NuGet Package Manager configuration:
                 </p>
 
                 @if (Config::get('app.site_user') != '' && Config::get('app.site_password') != '')
@@ -27,6 +29,8 @@
                 @else
                     <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}"</code></pre>
                 @endif
+
+                <h2>Chocolatey Installation</h2>
 
                 <p>
                     To install chocolatey from scratch:
