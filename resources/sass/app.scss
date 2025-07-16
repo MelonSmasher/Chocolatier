@@ -45,3 +45,52 @@ main {
   display: inline-block;
   vertical-align: middle;
 }
+
+/* PowerShell Syntax Highlighting */
+.language-powershell {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #f4f4f4;
+  color: #333333;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  
+  .hljs-function,
+  .hljs-built_in {
+    color: #0000FF;
+  }
+  
+  .hljs-comment {
+    color: #008000;
+  }
+  
+  .hljs-keyword,
+  .hljs-literal,
+  .hljs-name {
+    color: #00008B;
+    font-weight: bold;
+  }
+  
+  .hljs-string {
+    color: #A31515;
+  }
+  
+  .hljs-variable,
+  .hljs-template-variable {
+    color: #0070C1;
+  }
+  
+  .hljs-number {
+    color: #09885A;
+  }
+  
+  .hljs-params {
+    color: #333333;
+  }
+  
+  pre & {
+    border-radius: 3px;
+    padding: 1em;
+    margin: .5em 0;
+  }
+}
