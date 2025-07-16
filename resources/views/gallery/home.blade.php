@@ -56,7 +56,7 @@
                             @else
                                 <pre><code class="language-powershell">Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('{{route('api.index')}}/ChocolateyInstall.ps1'))</code></pre>
                             @endif
-                        </div>
+
 
                         Delete the existing default source:
                         <pre><code class="language-powershell">choco source remove -n chocolatey</code></pre>
@@ -71,6 +71,7 @@
                         @else
                             <pre><code class="language-powershell">choco source add -n "{{strtolower(trim(Config::get('choco.shortname')))}}" -s "{{ route('api.index') }}"</code></pre>
                         @endif
+                        </div>
                     </li>
                 </ul>
 
