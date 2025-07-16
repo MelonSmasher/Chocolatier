@@ -29,7 +29,7 @@
                 @endif
             </div>
 
-            <div class="col m4">
+            <div class="col m12">
                 <ul class="collapsible">
                     <li>
                         <div class="collapsible-header">
