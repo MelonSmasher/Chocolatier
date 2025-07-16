@@ -15,7 +15,8 @@
 
                 <ul class="collapsible">
                     <li>
-                        <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i><h4>Chocolatey Setup Instructions</h4>
+                        <div class="collapsible-header">
+                            <h4><i class="material-icons">keyboard_arrow_down</i> Chocolatey Setup Instructions</h4>
                         </div>
                         <div class="collapsible-body">
                             Optionally delete the existing default source:
@@ -37,8 +38,8 @@
 
                 <ul class="collapsible">
                     <li>
-                        <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>View
-                            <h4>Chocolatey Installation Instructions</h4>
+                        <div class="collapsible-header">
+                            <h4><i class="material-icons">keyboard_arrow_down</i> Chocolatey Installation Instructions</h4>
                         </div>
                         <div class="collapsible-body">
                             To install chocolatey from scratch:
