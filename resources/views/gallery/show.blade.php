@@ -29,13 +29,6 @@
                 @endif
             </div>
 
-            @if(!empty($package->release_notes))
-                <h5>Release Notes</h5>
-                <p>
-                <pre>{{ $package->release_notes }}</pre>
-                </p>
-            @endif
-
             <div class="col m4">
                 <ul class="collapsible">
                     <li>
@@ -52,6 +45,13 @@
                     </li>
                 </ul>
             </div>
+
+            @if(!empty($package->release_notes))
+                <h5>Release Notes</h5>
+                <p>
+                <pre>{{ $package->release_notes }}</pre>
+                </p>
+            @endif
 
             @if(!empty($package->getOwners()))
                 <h5>Owners</h5>
