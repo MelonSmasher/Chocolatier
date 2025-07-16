@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //$schedule->command('update:packages')->daily();
-        //$schedule->command('fix:latest')->daily();
+        $schedule->command('update:packages')->daily();
+        $schedule->command('fix:latest')->daily();
     }
 }
