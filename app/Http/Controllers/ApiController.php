@@ -221,6 +221,7 @@ class ApiController extends Controller {
             $version = Cache::remember($key, 21600, function () {
                 // If not in the cache determine the latest version and cache it
                 $package = cachePackage('chocolatey', 'latest');
+                dd($package);
                 return $package->version;
             });
             $package = NugetPackage::where('package_id', 'chocolatey')
